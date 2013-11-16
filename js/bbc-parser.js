@@ -161,7 +161,7 @@ function textToHtmlCB(mstr, m1, m2, m3, m4, offset, string)
 			opentags.push(new taginfo_t(m2, "</img>"));
 			if (m3 && uri_re.test(m3)) {
 				urlstart = -1;
-				return "<img src=\"" + m3 + "\">";
+				return "<img src=\"" + m3 + "alt=""\">";
 			}
 			urlstart = mstr.length + offset;
 			return "<img src=\"";
