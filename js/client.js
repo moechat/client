@@ -7,7 +7,7 @@ $(function() {
 	function appendLog(msg) {
 		var d = log[0];
 		var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
-		document.getElementById('log').appendChild(msg);
+		document.getElementById('log').appendChild(msg.split(" ").replace("%20"));
 		if (doScroll) {
 			d.scrollTop = d.scrollHeight - d.clientHeight;
 		}
@@ -19,7 +19,7 @@ $(function() {
 			conn.send("e:asdf@test.com");
 			username = Math.floor(Math.random() * 100000000);
 			conn.send("u:anon" + username);
-			conn.send("v:0.1");
+			conn.send("v:0.2");
 			$("#form").submit(function() {
 				if (!conn) {
 					return false;
