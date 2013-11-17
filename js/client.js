@@ -2,8 +2,8 @@ $(function() {
 	var conn;
 	var msg = $("#msg");
 	var log = $("#log");
-	var username;
-	var firstTime = true;
+	// var username;
+	// var firstTime = true;
 	function appendLog(msg) {
 		var d = log[0];
 		var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
@@ -20,20 +20,20 @@ $(function() {
 			conn.send("e" + "asdf@test.com");
 			conn.send("u" + "me");
 			$("#form").submit(function() {
-				if (firstTime) {
-					firstTime = false;
-					document.getElementById('username').disabled = true;
-					username = document.getElementById('username').value;
-				}
+				// if (firstTime) {
+					// firstTime = false;
+					// document.getElementById('username').disabled = true;
+					// username = document.getElementById('username').value;
+				// }
 				if (!conn) {
 					return false;
 				}
 				if (!msg.val()) {
 					return false;
 				}
-				var json = {
-					"m:": msg.val()
-				};
+				// var json = {
+					// "m:": msg.val()
+				// };
 				console.log(json);
 				conn.send("m:" + msg.val());
 				msg.val("");
@@ -45,12 +45,12 @@ $(function() {
 		}
 		conn.onmessage = function(evt) {
 			console.log(evt);
-			try {
+			//try {
 				var json = JSON.parse(evt.data);
-				appendLog($("<div/>").text(json["u"] + ": " + json["m"]));
-			} catch (e) {
-				appendLog($("<div/>").text(evt.data));
-			}
+				appendLog($("<div/>").text(parseBBCode(json["u"] + ": " + json["m"])));
+			// } catch (e) {
+				// appendLog($("<div/>").text(evt.data));
+			// }
 		}
 	} else {
 		appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"));
