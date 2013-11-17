@@ -41,29 +41,36 @@ $(function() {
 				return false;
 			});
 		};
+
 		window.conn.onclose = function(evt) {
 			appendLog($("<div><b>Window.Connection closed.</b></div>"));
 			$("#form").submit(function() {return false;});
-		}
+		};
+
 		window.conn.onmessage = function(evt) {
 			console.log(evt);
-			//try {
+			try {
 				var json = JSON.parse(evt.data);
-				var d = document.createElement("div");
+				var d = $('<div></div>');
 				if (json.error) {
-					d.innerHTML = "<b>" + json.error + "</b>";
+					d.html("<b>" + json.error + "</b>");
 				} else {
 					if (json["u"] == username) {
-						d.innerHTML = parseBBCode("me: " + json["m"]);
+						d.html(parseBBCode("me: " + json["m"]));
 					} else {
-						d.innerHTML = parseBBCode(json["u"] + ": " + json["m"]);
+						d.html(parseBBCode(json["u"] + ": " + json["m"]));
 					}
 				}
+				d.children().each(function(){
+					this.onload = null;
+					this.onchange = null;
+					this.onclick = null;
+				});
 				appendLog(d);
-			// } catch (e) {
-				// appendLog($("<div/>").text(evt.data));
-			// }
-		}
+			} catch (e) {
+				appendLog($("<div><div/>").text(evt.data));
+			}
+		};
 	} else {
 		appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"));
 	}
