@@ -13,8 +13,12 @@ $(function() {
 		}
 	}
 
+	$('#username').focusout(function() {
+		window.conn.send("e:"+$('#username').value());
+	});
+
 	if (window["WebSocket"]) {
-		conn = new WebSocket("ws://moechat.sauyon.com/chat");
+		window.conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		conn.onopen = function() {
 			conn.send("e:asdf@test.com");
 			username = "anon" + Math.floor(Math.random() * 1000000);
