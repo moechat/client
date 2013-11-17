@@ -7,7 +7,7 @@ $(function() {
 	function appendLog(msg) {
 		var d = log[0];
 		var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
-		document.getElementById('log').appendChild(msg.split(" ").join("%20"));
+		document.getElementById('log').appendChild(msg);
 		if (doScroll) {
 			d.scrollTop = d.scrollHeight - d.clientHeight;
 		}
