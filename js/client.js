@@ -17,7 +17,8 @@ $(function() {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		conn.onopen = function() {
 			conn.send("e:asdf@test.com");
-			username = "anon" + Math.floor(Math.random() * 1000000);
+			// username = "anon" + Math.floor(Math.random() * 1000000);
+			username = "KevZho";
 			conn.send("u:" + username);
 			conn.send("v:0.3");
 			$("#form").submit(function() {
@@ -27,6 +28,7 @@ $(function() {
 				if (!msg.val()) {
 					return false;
 				}
+				console.log("m:%s", document.getElementById('msg').value);
 				conn.send("m:" + document.getElementById('msg').value);
 				msg.val("");
 				return false;
@@ -37,6 +39,7 @@ $(function() {
 			$("#form").submit(function() {return false;});
 		}
 		conn.onmessage = function(evt) {
+			console.log(evt);
 			//try {
 				var json = JSON.parse(evt.data);
 				var d = document.createElement("div");
