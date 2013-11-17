@@ -17,7 +17,8 @@ $(function() {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		conn.onopen = function() {
 			conn.send("e:asdf@test.com");
-			username = "anon" + Math.floor(Math.random() * 1000000);
+			// username = "anon" + Math.floor(Math.random() * 1000000);
+			username = "KevZho";
 			conn.send("u:" + username);
 			conn.send("v:0.3");
 			$("#form").submit(function() {
