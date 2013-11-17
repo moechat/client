@@ -14,8 +14,9 @@ $(function() {
 	}
 
 	$('#username').focusout(function() {
-		if($('#username').val())
+		if($('#username').val()) {
 			window.conn.send("u:"+$('#username').val());
+			username = $('#username').val();
 	});
 
 	if (window["WebSocket"]) {
