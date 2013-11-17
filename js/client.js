@@ -2,7 +2,7 @@ $(function() {
 	var conn;
 	var msg = $("#msg");
 	var log = $("#log");
-	// var username;
+	var username;
 	// var firstTime = true;
 	function appendLog(msg) {
 		var d = log[0];
@@ -18,8 +18,9 @@ $(function() {
 		console.log(conn);
 		conn.onopen = function() {
 			conn.send("e:asdf@test.com");
-			conn.send("u:anon" + (Math.random() * 100000000));
-			conn.send("v:0.1");
+			username = Math.floor(Math.random() * 100000000);
+			conn.send("u:anon" + username);
+			conn.send("v:0.2");
 			$("#form").submit(function() {
 				// if (firstTime) {
 					// firstTime = false;
@@ -50,11 +51,16 @@ $(function() {
 			console.log(evt);
 			//try {
 				var json = JSON.parse(evt.data);
-				if (json.error) {
-					alert("error: " + json.error);
-				}
 				var d = document.createElement("div");
-				d.innerHTML = parseBBCode(json["u"] + ": " + json["m"]);
+				if (json.error) {
+					d.innerHTML = "<b>" + json.error + "</b>";
+				} else {
+					if (json["u"] == "anon" + username) {
+						d.innerHTML = parseBBCode("me: " + escape(json["m"]));
+					} else {
+						d.innerHTML = parseBBCode(json["u"] + ": " + escape(json["m"]));
+					}
+				}
 				appendLog(d);
 			// } catch (e) {
 				// appendLog($("<div/>").text(evt.data));
