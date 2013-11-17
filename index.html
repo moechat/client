@@ -1,8 +1,11 @@
 <!DOCTYPE html>
 <!--[if IE 8]> 				 <html class="no-js lt-ie9" lang="en" > <![endif]-->
 <!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
-
 <head>
+	<link rel="stylesheet" type="text/css" href="css/moechat.css" /> 
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script>
+	<script src="js/client.js"></script>
+
 	<meta charset="utf-8">
   <meta name="viewport" content="width=device-width">
   <title>MoeChat</title>
@@ -32,14 +35,19 @@
 			<div class="row">
 				<div class="large-12 columns">
 					<div class="panel">
-						<p><b>You:</b> Hi!</p>
-						<p><b>Stranger:</b> o.O</p>
+						<div id="log"></div>
+						<form id="form">
+  						<input type="submit" value="Send" />
+  						<input type="text" id="msg" size="64"/>
+						</form>
+						<div id="wrapper"></div>
 					</div>
 				</div>
 			</div>
 		</div>
 		<div class="large-4 columns">
 			<h3>Users</h3>
+			<img src="http://www.gravatar.com/avatar/4773caf0bcbc0ba2c99ff966d4c9a01c" />
 			<p>justinyangusa</p>
 		</div>
 	</div>
