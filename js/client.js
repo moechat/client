@@ -1,5 +1,4 @@
 $(function() {
-
 	var conn;
 	var msg = $("#msg");
 	var log = $("#log");
@@ -7,7 +6,7 @@ $(function() {
 	function appendLog(msg) {
 		var d = log[0]
 	var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
-msg.appendTo(log)
+	msg.appendTo(log);
 	if (doScroll) {
 		d.scrollTop = d.scrollHeight - d.clientHeight;
 	}
