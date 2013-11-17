@@ -15,29 +15,18 @@ $(function() {
 
 	if (window["WebSocket"]) {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
-		console.log(conn);
 		conn.onopen = function() {
 			conn.send("e:asdf@test.com");
 			username = Math.floor(Math.random() * 100000000);
 			conn.send("u:anon" + username);
-			conn.send("v:0.2");
+			conn.send("v:0.1");
 			$("#form").submit(function() {
-				// if (firstTime) {
-					// firstTime = false;
-					// document.getElementById('username').disabled = true;
-					// username = document.getElementById('username').value;
-				// }
 				if (!conn) {
 					return false;
 				}
 				if (!msg.val()) {
 					return false;
 				}
-				// var json = {
-					// "m:": msg.val()
-				// };
-				//console.log(json);
-				console.log("m:%s", document.getElementById('msg').value);
 				conn.send("m:" + document.getElementById('msg').value);
 				msg.val("");
 				return false;
@@ -48,7 +37,6 @@ $(function() {
 			$("#form").submit(function() {return false;});
 		}
 		conn.onmessage = function(evt) {
-			console.log(evt);
 			//try {
 				var json = JSON.parse(evt.data);
 				var d = document.createElement("div");
@@ -56,9 +44,9 @@ $(function() {
 					d.innerHTML = "<b>" + json.error + "</b>";
 				} else {
 					if (json["u"] == "anon" + username) {
-						d.innerHTML = parseBBCode("me: " + escape(json["m"]));
+						d.innerHTML = parseBBCode("me: " + json["m"]);
 					} else {
-						d.innerHTML = parseBBCode(json["u"] + ": " + escape(json["m"]));
+						d.innerHTML = parseBBCode(json["u"] + ": " + json["m"]);
 					}
 				}
 				appendLog(d);
