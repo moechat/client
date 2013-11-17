@@ -1,59 +1,61 @@
 $(function() {
 	var conn;
-	var msg = $("#msg");
-	var log = $("#log");
+	var msg = $('#msg');
+	var log = $('#log');
+	var msgwrap = $('#msgwrap');
+	var nameinput = $('#username');
+	var form = $('#form');
 	var username;
-	// var firstTime = true;
-	function appendLog(msg) {
-		var d = log[0];
-		var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
-		$('#log').append(msg);
-		if (doScroll) {
-			d.scrollTop = d.scrollHeight - d.clientHeight;
-		}
-	}
 
-	$('#username').focusout(function() {
-		if($('#username').val()) {
-			window.conn.send("u:"+$('#username').val());
-			username = $('#username').val();
+	nameinput.focusout(function() {
+		if(nameinput.val() && nameinput.val() != username) {
+			conn.send("u:"+nameinput.val());
+			username = nameinput.val();
 		}
 	});
 
+	function appendLog(msg) {
+		var doScroll = log.scrollTop() == msgwrap.height() - log.height;
+		msgwrap.append(msg);
+		if (doScroll) {
+			log.scrollTop(msgwrap.height() - log.height);
+		}
+	}
+
 	if (window["WebSocket"]) {
-		window.conn = new WebSocket("ws://moechat.sauyon.com/chat");
-		window.conn.onopen = function() {
-			window.conn.send("e:asdf@test.com");
+		conn = new WebSocket("ws://moechat.sauyon.com/chat");
+		conn.onopen = function() {
+			conn.send("e:asdf@test.com");
 			username = "anon" + Math.floor(Math.random() * 1000000);
-			// username = "KevZho";
-			window.conn.send("u:" + username);
-			window.conn.send("v:0.3");
-			$("#form").submit(function() {
-				if (!window.conn) {
+			conn.send("u:" + username);
+			conn.send("v:0.3");
+			form.submit(function() {
+				if (!conn) {
 					return false;
 				}
 				if (!msg.val()) {
 					return false;
 				}
 				console.log("m:%s", document.getElementById('msg').value);
-				window.conn.send("m:" + document.getElementById('msg').value);
+				conn.send("m:" + document.getElementById('msg').value);
 				msg.val("");
 				return false;
 			});
 		};
 
-		window.conn.onclose = function(evt) {
-			appendLog($("<div><b>Window.Connection closed.</b></div>"));
-			$("#form").submit(function() {return false;});
+		conn.onclose = function(evt) {
+			appendLog($("<div><b>Connection closed.</b></div>"));
+			form.submit(function() {return false;});
 		};
 
-		window.conn.onmessage = function(evt) {
+		conn.onmessage = function(evt) {
 			console.log(evt);
 			try {
 				var json = JSON.parse(evt.data);
 				var d = $('<div></div>');
 				if (json.error) {
 					d.html("<b>" + json.error + "</b>");
+					d.addClass('error');
 				} else {
 					if (json["u"] == username) {
 						d.html(parseBBCode("me: " + json["m"]));
@@ -68,7 +70,7 @@ $(function() {
 				});
 				appendLog(d);
 			} catch (e) {
-				appendLog($("<div><div/>").text(evt.data));
+				appendLog($('<div class="error"><div/>').text(evt.data));
 			}
 		};
 	} else {

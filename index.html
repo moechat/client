@@ -22,14 +22,16 @@
 				<hr />
 			</div>
 		</div>
-		<div class="row" style="height: 85%;min-height:500px">
+		<div class="row" style="height: 80%;min-height:500px">
 			<div class="large-10 columns" style="height:inherit;min-height:500px">
 				<h3>Chat</h3>
 				<!-- Grid Example -->
 				<div class="row" style="height:100%">
 					<div class="large-12 columns" style="height:100%;min-height:500px">
 						<div class="panel" style="height:100%;min-height:500px">
-							<div id="log" style="height:500px;overflow-y:auto;overflow-x:hidden;"></div>
+							<div id="log">
+                <div id="msgwrap"></div>
+              </div>
 							<form id="form" style="margin-top:10px">
 								<input type="hidden" id="email" value="kevin" />
 								<span><label for="username" style="display:inline">Name: </label><input type="text" id="username" value="" placeholder="Your name!" style="display:inline;width:50%" /></span>
