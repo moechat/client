@@ -20,30 +20,30 @@ $(function() {
 
 	if (window["WebSocket"]) {
 		window.conn = new WebSocket("ws://moechat.sauyon.com/chat");
-		conn.onopen = function() {
-			conn.send("e:asdf@test.com");
+		window.conn.onopen = function() {
+			window.conn.send("e:asdf@test.com");
 			username = "anon" + Math.floor(Math.random() * 1000000);
 			// username = "KevZho";
-			conn.send("u:" + username);
-			conn.send("v:0.3");
+			window.conn.send("u:" + username);
+			window.conn.send("v:0.3");
 			$("#form").submit(function() {
-				if (!conn) {
+				if (!window.conn) {
 					return false;
 				}
 				if (!msg.val()) {
 					return false;
 				}
 				console.log("m:%s", document.getElementById('msg').value);
-				conn.send("m:" + document.getElementById('msg').value);
+				window.conn.send("m:" + document.getElementById('msg').value);
 				msg.val("");
 				return false;
 			});
 		};
-		conn.onclose = function(evt) {
-			appendLog($("<div><b>Connection closed.</b></div>"));
+		window.conn.onclose = function(evt) {
+			appendLog($("<div><b>Window.Connection closed.</b></div>"));
 			$("#form").submit(function() {return false;});
 		}
-		conn.onmessage = function(evt) {
+		window.conn.onmessage = function(evt) {
 			console.log(evt);
 			//try {
 				var json = JSON.parse(evt.data);
