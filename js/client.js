@@ -7,7 +7,7 @@ $(function() {
 	function appendLog(msg) {
 		var d = log[0];
 		var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
-		msg.appendTo(log);
+		document.getElementById('log').appendChild(msg);
 		if (doScroll) {
 			d.scrollTop = d.scrollHeight - d.clientHeight;
 		}
@@ -18,7 +18,8 @@ $(function() {
 		console.log(conn);
 		conn.onopen = function() {
 			conn.send("e:asdf@test.com");
-			conn.send("u:" + "me");
+			conn.send("u:anon" + (Math.random() * 100000000));
+			conn.send("v:0.1");
 			$("#form").submit(function() {
 				// if (firstTime) {
 					// firstTime = false;
@@ -43,12 +44,18 @@ $(function() {
 		};
 		conn.onclose = function(evt) {
 			appendLog($("<div><b>Connection closed.</b></div>"));
+			$("#form").submit(function() {return false;});
 		}
 		conn.onmessage = function(evt) {
 			console.log(evt);
 			//try {
 				var json = JSON.parse(evt.data);
-				appendLog($("<div/>").text(parseBBCode(json["u"] + ": " + json["m"])));
+				if (json.error) {
+					alert("error: " + json.error);
+				}
+				var d = document.createElement("div");
+				d.innerHTML = parseBBCode(json["u"] + ": " + json["m"]);
+				appendLog(d);
 			// } catch (e) {
 				// appendLog($("<div/>").text(evt.data));
 			// }
