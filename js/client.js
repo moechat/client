@@ -17,8 +17,8 @@ $(function() {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		console.log(conn);
 		conn.onopen = function() {
-			conn.send("e" + "asdf@test.com");
-			conn.send("u" + "me");
+			conn.send("e:asdf@test.com");
+			conn.send("u:" + "me");
 			$("#form").submit(function() {
 				// if (firstTime) {
 					// firstTime = false;
@@ -34,8 +34,9 @@ $(function() {
 				// var json = {
 					// "m:": msg.val()
 				// };
-				console.log(json);
-				conn.send("m:" + msg.val());
+				//console.log(json);
+				console.log("m:%s", document.getElementById('msg').value);
+				conn.send("m:" + document.getElementById('msg').value);
 				msg.val("");
 				return false;
 			});
