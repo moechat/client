@@ -4,17 +4,11 @@ $(function() {
 	var msg = $("#msg");
 	var log = $("#log");
 	var usersbox = $("#usersbox");
+	var msgwrap = $('#msgwrap');
 	var username;
 
-	nameinput.focusout(function() {
-		if(nameinput.val() && nameinput.val() != username) {
-			conn.send("u:"+nameinput.val());
-			username = nameinput.val();
-		}
-	});
-
 	function appendLog(msg) {
-		var doScroll = log.scrollTop() == msgwrap.height() - log.height;
+		var doScroll = log.scrollTop() == document.getElementById('msgwrap') - log.height;
 		msgwrap.append(msg);
 		if (doScroll) {
 			log.scrollTop(msgwrap.height() - log.height);
@@ -55,12 +49,12 @@ $(function() {
 			});
 		};
 
-		conn.onclose = function(evt) {
+		window.conn.onclose = function(evt) {
 			appendLog($("<div><b>Connection closed.</b></div>"));
 			form.submit(function() {return false;});
 		};
 
-		conn.onmessage = function(evt) {
+		window.conn.onmessage = function(evt) {
 			console.log(evt);
 			queryUsers();
 			try {
