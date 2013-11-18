@@ -98,6 +98,8 @@ $(function() {
 						break;
 					case "fnamechange":
 						username = json.args.newname;
+						$('#username').val(username);
+						break;
 					default: break;
 					}
 				} else if (json.notif) {
