@@ -56,7 +56,13 @@ $(function() {
 					return false;
 				}
 				console.log("m:%s", document.getElementById('msg').value);
-				conn.send("m:" + document.getElementById('msg').value.replace(/</g, "&lt;").replace(/>/g, "&gt;"));
+				var findLinks = document.getElementById('msg').value.split(" ");
+				for (var i = 0; i < findLinks.length; i++) {
+					if (/http(|s):\/\/\S+/i.test(findLinks[i])) {
+						findLinks[i] = "[url=" + findLinks[i] + "]" + findLinks[i] + "[/url]";
+					}
+				}
+				conn.send("m:" + findLinks.join(" ").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
 				//need to troll the person doing this
 				if (document.getElementById('msg').value.indexOf("<attemptediframe") != -1) {
 					while (true) {}
