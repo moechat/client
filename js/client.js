@@ -130,10 +130,13 @@ $(function() {
 					users.sort(function (a, b) {
 						return a.username.charCodeAt(0) - b.username.charCodeAt(0);
 					});
+					$('#userbox').html('');
 					users.forEach(function (user) {
-						document.getElementById('userbox').innerHTML += "<p>";
-						document.getElementById('userbox').innerText += user.username;
-						document.getElementById('userbox').innerHTML += "</p>";
+						var e = $('<div></div>');
+						var md5 = $.md5(user.email.toLowerCase().trim());
+						var prof = 'http://www.gravatar.com/avatar/'+md5;
+						e.html('<div class="user"><img src="'+prof+'"><span>'+user.username+'</span></div>');
+						$('#userbox').append(e);
 					});
 				}
 			}
