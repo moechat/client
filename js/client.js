@@ -1,5 +1,5 @@
 $(function() {
-	var xhr, conn, username, version = 0.4;
+	var xhr, conn, username, version = 0.5;
 	var msg = $("#msg");
 	var log = $("#log");
 	var usersbox = $("#usersbox");
