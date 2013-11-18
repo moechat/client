@@ -87,7 +87,7 @@ $(function() {
 				var json = JSON.parse(evt.data);
 				var d = $('<div></div>');
 				if (json.error) {
-					d.innerHTML("<b>" + json.error + "</b>");
+					d.innerHTML("<b>" + json.msg + "</b>");
 					d.className('error');
 				} else if (json.cmd) {
 					switch (json.cmd) {
