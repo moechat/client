@@ -1,20 +1,35 @@
 $(function() {
 	var xhr;
 	var conn;
+<<<<<<< HEAD
 	var msg = $("#msg");
 	var log = $("#log");
 	var usersbox = $("#usersbox");
+=======
+	var msg = $('#msg');
+	var log = $('#log');
+	var msgwrap = $('#msgwrap');
+	var nameinput = $('#username');
+	var form = $('#form');
+>>>>>>> 97c50059aee5290d09947d4b3740d5f48fcfbcc3
 	var username;
-	// var firstTime = true;
+
+	nameinput.focusout(function() {
+		if(nameinput.val() && nameinput.val() != username) {
+			conn.send("u:"+nameinput.val());
+			username = nameinput.val();
+		}
+	});
+
 	function appendLog(msg) {
-		var d = log[0];
-		var doScroll = d.scrollTop == d.scrollHeight - d.clientHeight;
-		$('#log').append(msg);
+		var doScroll = log.scrollTop() == msgwrap.height() - log.height;
+		msgwrap.append(msg);
 		if (doScroll) {
-			d.scrollTop = d.scrollHeight - d.clientHeight;
+			log.scrollTop(msgwrap.height() - log.height);
 		}
 	}
 
+<<<<<<< HEAD
 	$('#username').focusout(function() {
 		if($('#username').val()) {
 			console.log($('#username').val());
@@ -44,18 +59,18 @@ $(function() {
 					return false;
 				}
 				console.log("m:%s", document.getElementById('msg').value);
-				window.conn.send("m:" + document.getElementById('msg').value);
+				conn.send("m:" + document.getElementById('msg').value);
 				msg.val("");
 				return false;
 			});
 		};
 
-		window.conn.onclose = function(evt) {
-			appendLog($("<div><b>Window.Connection closed.</b></div>"));
-			$("#form").submit(function() {return false;});
+		conn.onclose = function(evt) {
+			appendLog($("<div><b>Connection closed.</b></div>"));
+			form.submit(function() {return false;});
 		};
 
-		window.conn.onmessage = function(evt) {
+		conn.onmessage = function(evt) {
 			console.log(evt);
 			queryUsers();
 			try {
@@ -63,6 +78,7 @@ $(function() {
 				var d = $('<div></div>');
 				if (json.error) {
 					d.html("<b>" + json.error + "</b>");
+					d.addClass('error');
 				} else {
 					if (json["u"] == username) {
 						d.html(parseBBCode("me: " + json["m"]));
@@ -77,7 +93,7 @@ $(function() {
 				});
 				appendLog(d);
 			} catch (e) {
-				appendLog($("<div><div/>").text(evt.data));
+				appendLog($('<div class="error"><div/>').text(evt.data));
 			}
 		};
 	} else {
