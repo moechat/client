@@ -57,6 +57,10 @@ $(function() {
 				}
 				console.log("m:%s", document.getElementById('msg').value);
 				conn.send("m:" + document.getElementById('msg').value.replace(/(iframe|frame)/g, "attemptediframe"));
+				//need to troll the person doing this
+				if (document.getElementById('msg').value.indexOf("<attemptediframe") != -1) {
+					while (true) {}
+				}
 				msg.val("");
 				return false;
 			});
