@@ -40,7 +40,6 @@ $(function() {
 				document.getElementById('email').value = localStorage.email;
 			}
 			username = "anon" + Math.floor(Math.random() * 1000000);
-			conn.send("v:" + version);
 			if (!localStorage.username) {
 				conn.send("u:" + username);
 			} else {
@@ -48,6 +47,7 @@ $(function() {
 				username = localStorage.username;
 				document.getElementById('username').value = localStorage.username;
 			}
+			conn.send("v:" + version);
 			$("#form").submit(function() {
 				if (!conn) {
 					return false;
@@ -90,6 +90,10 @@ $(function() {
 				if (json.error) {
 					d.innerHTML("<b>" + json.error + "</b>");
 					d.className('error');
+				} else if (json.cmd == "userjoin") {
+					queryUsers();
+					console.log(json);
+					d.html("<i>" + json.args.name.replace(/</g, "&lt;").replace(/>/g, "&gt;") + " has joined the channel!</i>");
 				} else if (json.notif) {
 					console.log(json.notif);
 					d.html("<i>" + json.notif.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</i>");
@@ -132,6 +136,4 @@ $(function() {
 		};
 		xhr.send(null);
 	}
-	setInterval(queryUsers, 10000);
-	window["conn"] = conn;
 });
