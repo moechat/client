@@ -43,7 +43,7 @@ $(function() {
 					return false;
 				}
 				console.log("m:%s", document.getElementById('msg').value);
-				conn.send("m:" + document.getElementById('msg').value);
+				window.conn.send("m:" + document.getElementById('msg').value);
 				msg.val("");
 				return false;
 			});
