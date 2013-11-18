@@ -1,0 +1,136 @@
+
+/*------------------------------------*\
+	$WRAPPER
+\*------------------------------------*/
+.buttons {/* Style as you wish (toolbar) */
+}
+/* The Magnificent CLEARFIX */
+.buttons:before, .buttons:after {
+	content: "\0020";
+	display: block;
+	height: 0;
+	visibility: hidden;
+}
+.buttons:after {
+	clear: both;
+}
+.buttons {
+	zoom: 1;
+}
+/* ------------------------ */
+
+
+/*------------------------------------*\
+	$BUTTON
+\*------------------------------------*/
+input {
+	text-decoration: none;
+	/*text-shadow: 0 1px 0 #fff;*/
+	font: bold 14px Helvetica, Arial, sans-serif;
+	color: #111;
+	line-height: 17px;
+	height: 18px;
+	display: inline-block;
+	float: left;
+	margin: 5px;
+	padding: 5px 6px 4px 6px;
+	background: #F3F3F3;
+	border: solid 1px #D9D9D9;
+	border-radius: 2px;
+	-webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+ -webkit-transition: border-color .20s;
+ -moz-transition: border-color .20s;
+ -o-transition: border-color .20s;
+ transition: border-color .20s;
+	height: 40px;
+	cursor: pointer;
+}
+input:hover {
+	background: #F4F4F4;
+	border-color: #C0C0C0;
+	color: #333;
+}
+input:active {
+	border-color: #4D90FE;
+	color: #111;
+	-moz-box-shadow:inset 0 0 10px #D4D4D4;
+	-webkit-box-shadow:inset 0 0 10px #D4D4D4;
+	box-shadow:inset 0 0 10px #D4D4D4;
+}
+input.bluebtn {
+	height: 29px;
+	border: 1px solid #3079ED !important;
+	background: #4B8DF8;
+	background: -webkit-linear-gradient(top, #4C8FFD, #4787ED);
+	background: -moz-linear-gradient(top, #4C8FFD, #4787ED);
+	background: -ms-linear-gradient(top, #4C8FFD, #4787ED);
+	background: -o-linear-gradient(top, #4C8FFD, #4787ED);
+ -webkit-transition: border .20s;
+ -moz-transition: border .20s;
+ -o-transition: border .20s;
+ transition: border .20s;
+}
+input.bluebtn:hover {
+	border: 1px solid #2F5BB7 !important;
+	background: #3F83F1;
+	background: -webkit-linear-gradient(top, #4D90FE, #357AE8);
+	background: -moz-linear-gradient(top, #4D90FE, #357AE8);
+	background: -ms-linear-gradient(top, #4D90FE, #357AE8);
+	background: -o-linear-gradient(top, #4D90FE, #357AE8);
+}
+input.bluebtn2 {
+	height: 40px;
+}
+input.action:hover {
+	-moz-box-shadow: 0 1px 0px #DDD;
+	-webkit-box-shadow: 0 1px 0px #DDD;
+	box-shadow:iset 0 1px 0px #DDD;
+}
+input.action:active {
+	-moz-box-shadow: none !important;
+	-webkit-box-shadow: none !important;
+	box-shadow: none !important;
+	border-color: #C6C6C6 !important;
+}
+input.bluebtn:active {
+	border-color: #2F5BB7 !important;
+}
+/*------------------------------------*\
+	$BUTTON LABEL
+\*------------------------------------*/
+ input span.label {
+	display: inline-block;
+	float: left;
+	line-height: 17px;
+	height: 18px;
+	padding: 0 1px;
+	overflow: hidden;
+	color: #444;
+ -webkit-transition: color .20s;
+ -moz-transition: color .20s;
+ -o-transition: color .20s;
+ transition: color .20s;
+}
+input span.label {
+	line-height: 15px !important;
+}
+input:hover .label.bluebtn {
+	color: #7090C8;
+}
+input:hover .label.yellow {
+	color: #F7CB38;
+}
+input.bluebtn .label {
+	color: #FFF !important;
+	text-shadow: 0 1px 0 #2F5BB7 !important;
+}
+input.action .label {
+	padding: 0 17px !important;
+}
+input.action:active .label {
+	color: #333 !important;
+}
+input.bluebtn:active .label {
+	color: #FFF !important;
+}
