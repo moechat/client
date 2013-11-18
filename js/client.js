@@ -65,6 +65,11 @@ $(function() {
 		conn.onclose = function(evt) {
 			appendLog($("<div><b>Connection closed.</b></div>"));
 			form.submit = function() {return false;};
+			document.getElementById('submitBtn').onclick = function() {location.reload()};
+			document.getElementById('submitBtn').innerHTML = "Reconnect";
+			document.getElementById('msg').disabled = true;
+			document.getElementById('username').disabled = true;
+			document.getElementById('email').disabled = true;
 		};
 
 		conn.onmessage = function(evt) {
@@ -115,4 +120,5 @@ $(function() {
 		xhr.send(null);
 	}
 	setInterval(queryUsers, 10000);
+	window["conn"] = conn;
 });
