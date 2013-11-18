@@ -6,7 +6,7 @@ $(function() {
 	var usersbox = $("#usersbox");
 	var msgwrap = $('#msgwrap');
 	var username;
-	var version = 0.3;
+	var version = 0.4;
 	function appendLog(msg) {
 		var doScroll = log.scrollTop() == document.getElementById('msgwrap') - log.height;
 		msgwrap.append(msg);
@@ -16,7 +16,7 @@ $(function() {
 	}
 	$('#username').focusout(function() {
 		if($('#username').val()) {
-			// console.log($('#username').val());
+			console.log($('#username').val());
 			localStorage.username = $('#username').val();
 			window.conn.send("u:" + $('#username').val());
 			username = $('#username').val();
@@ -25,7 +25,7 @@ $(function() {
 	$('#email').focusout(function() {
 		if($('#email').val()) {
 			localStorage.email = $('#email').val();
-			// console.log($("#email").val());
+			console.log($("#email").val());
 			window.conn.send("e:" + $('#email').val());
 		}
 	});
@@ -33,6 +33,7 @@ $(function() {
 	if (window["WebSocket"]) {
 		window.conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		window.conn.onopen = function() {
+			console.log("Connected!");
 			if (!localStorage.email) {
 				window.conn.send("e:(blank)");
 			} else {
@@ -55,7 +56,7 @@ $(function() {
 				if (!msg.val()) {
 					return false;
 				}
-				// console.log("m:%s", document.getElementById('msg').value);
+				console.log("m:%s", document.getElementById('msg').value);
 				window.conn.send("m:" + document.getElementById('msg').value);
 				msg.val("");
 				return false;
@@ -68,7 +69,7 @@ $(function() {
 		};
 
 		window.conn.onmessage = function(evt) {
-			// console.log(evt);
+			console.log(evt);
 			queryUsers();
 			try {
 				var json = JSON.parse(evt.data);
