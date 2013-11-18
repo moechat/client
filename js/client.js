@@ -6,7 +6,7 @@ $(function() {
 	var usersbox = $("#usersbox");
 	var msgwrap = $('#msgwrap');
 	var username;
-
+	var version = 0.3;
 	function appendLog(msg) {
 		var doScroll = log.scrollTop() == document.getElementById('msgwrap') - log.height;
 		msgwrap.append(msg);
@@ -16,14 +16,16 @@ $(function() {
 	}
 	$('#username').focusout(function() {
 		if($('#username').val()) {
-			console.log($('#username').val());
+			// console.log($('#username').val());
+			localStorage.username = $('#username').val();
 			window.conn.send("u:" + $('#username').val());
 			username = $('#username').val();
 		}
 	});
 	$('#email').focusout(function() {
 		if($('#email').val()) {
-			console.log($("#email").val());
+			localStorage.email = $('#email').val();
+			// console.log($("#email").val());
 			window.conn.send("e:" + $('#email').val());
 		}
 	});
@@ -31,10 +33,21 @@ $(function() {
 	if (window["WebSocket"]) {
 		window.conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		window.conn.onopen = function() {
-			window.conn.send("e:(blank)");
+			if (!localStorage.email) {
+				window.conn.send("e:(blank)");
+			} else {
+				window.conn.send("e:" + localStorage.username);
+				document.getElementById('email').value = localStorage.email;
+			}
 			username = "anon" + Math.floor(Math.random() * 1000000);
-			window.conn.send("u:" + username);
-			window.conn.send("v:0.3");
+			window.conn.send("v:" + version);
+			if (!localStorage.username) {
+				window.conn.send("u:" + username);
+			} else {
+				window.conn.send("u:" + localStorage.username);
+				username = localStorage.username;
+				document.getElementById('username').value = localStorage.username;
+			}
 			$("#form").submit(function() {
 				if (!window.conn) {
 					return false;
@@ -42,7 +55,7 @@ $(function() {
 				if (!msg.val()) {
 					return false;
 				}
-				console.log("m:%s", document.getElementById('msg').value);
+				// console.log("m:%s", document.getElementById('msg').value);
 				window.conn.send("m:" + document.getElementById('msg').value);
 				msg.val("");
 				return false;
@@ -51,11 +64,11 @@ $(function() {
 
 		window.conn.onclose = function(evt) {
 			appendLog($("<div><b>Connection closed.</b></div>"));
-			form.submit(function() {return false;});
+			form.submit = function() {return false;};
 		};
 
 		window.conn.onmessage = function(evt) {
-			console.log(evt);
+			// console.log(evt);
 			queryUsers();
 			try {
 				var json = JSON.parse(evt.data);
@@ -90,10 +103,12 @@ $(function() {
 			if (xhr.readyState == 4) {
 				document.getElementById('userbox').innerHTML = "";
 				var users = eval(xhr.response);
-				users.sort(function (a, b) {return a.username.charCodeAt(0) - b.username.charCodeAt(0)});
-				users.forEach(function (user) {
-					document.getElementById('userbox').innerHTML += ("<p>" + user.username + "</p>");
-				});
+				if (users) {
+					users.sort(function (a, b) {return a.username.charCodeAt(0) - b.username.charCodeAt(0)});
+					users.forEach(function (user) {
+						document.getElementById('userbox').innerHTML += ("<p>" + user.username + "</p>");
+					});
+				}
 			}
 		};
 		xhr.send(null);
