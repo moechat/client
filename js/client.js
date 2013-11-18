@@ -1,7 +1,9 @@
 $(function() {
+	var xhr;
 	var conn;
 	var msg = $("#msg");
 	var log = $("#log");
+	var usersbox = $("#usersbox");
 	var username;
 	// var firstTime = true;
 	function appendLog(msg) {
@@ -15,17 +17,23 @@ $(function() {
 
 	$('#username').focusout(function() {
 		if($('#username').val()) {
-			window.conn.send("u:"+$('#username').val());
+			console.log($('#username').val());
+			window.conn.send("u:" + $('#username').val());
 			username = $('#username').val();
+		}
+	});
+	$('#email').focusout(function() {
+		if($('#email').val()) {
+			console.log($("#email").val());
+			window.conn.send("e:" + $('#email').val());
 		}
 	});
 
 	if (window["WebSocket"]) {
 		window.conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		window.conn.onopen = function() {
-			window.conn.send("e:asdf@test.com");
+			window.conn.send("e:(blank)");
 			username = "anon" + Math.floor(Math.random() * 1000000);
-			// username = "KevZho";
 			window.conn.send("u:" + username);
 			window.conn.send("v:0.3");
 			$("#form").submit(function() {
@@ -49,6 +57,7 @@ $(function() {
 
 		window.conn.onmessage = function(evt) {
 			console.log(evt);
+			queryUsers();
 			try {
 				var json = JSON.parse(evt.data);
 				var d = $('<div></div>');
@@ -74,4 +83,20 @@ $(function() {
 	} else {
 		appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"));
 	}
+	function queryUsers() {
+		xhr = new XMLHttpRequest();
+		xhr.open("GET", "http://moechat.sauyon.com/users", true);
+		xhr.onreadystatechange = function (e) {
+			if (xhr.readyState == 4) {
+				document.getElementById('userbox').innerHTML = "";
+				var users = eval(xhr.response);
+				users.sort(function (a, b) {return a.username.charCodeAt(0) - b.username.charCodeAt(0)});
+				users.forEach(function (user) {
+					document.getElementById('userbox').innerHTML += ("<p>" + user.username + "</p>");
+				});
+			}
+		};
+		xhr.send(null);
+	}
+	setInterval(queryUsers, 10000);
 });
