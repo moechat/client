@@ -1,12 +1,9 @@
 $(function() {
-	var xhr;
-	var conn;
+	var xhr, conn, username, version = 0.4;
 	var msg = $("#msg");
 	var log = $("#log");
 	var usersbox = $("#usersbox");
 	var msgwrap = $('#msgwrap');
-	var username;
-	var version = 0.4;
 	function appendLog(msg) {
 		var doScroll = log.scrollTop() == document.getElementById('msgwrap') - log.height;
 		msgwrap.append(msg);
@@ -15,62 +12,62 @@ $(function() {
 		}
 	}
 	$('#username').focusout(function() {
+		console.log($('#username').val());
+		localStorage.username = $('#username').val();
 		if($('#username').val()) {
-			console.log($('#username').val());
-			localStorage.username = $('#username').val();
-			window.conn.send("u:" + $('#username').val());
+			conn.send("u:" + $('#username').val());
 			username = $('#username').val();
 		}
 	});
 	$('#email').focusout(function() {
-		if($('#email').val()) {
-			localStorage.email = $('#email').val();
-			console.log($("#email").val());
-			window.conn.send("e:" + $('#email').val());
+		localStorage.email = $('#email').val();
+		console.log($("#email").val());
+		if($('#email').val()) {	
+			conn.send("e:" + $('#email').val());
 		}
 	});
 
 	if (window["WebSocket"]) {
-		window.conn = new WebSocket("ws://moechat.sauyon.com/chat");
-		window.conn.onopen = function() {
+		conn = new WebSocket("ws://moechat.sauyon.com/chat");
+		conn.onopen = function() {
 			console.log("Connected!");
+			queryUsers();
 			if (!localStorage.email) {
-				window.conn.send("e:(blank)");
+				conn.send("e:(blank)");
 			} else {
-				window.conn.send("e:" + localStorage.username);
+				conn.send("e:" + localStorage.username);
 				document.getElementById('email').value = localStorage.email;
 			}
 			username = "anon" + Math.floor(Math.random() * 1000000);
-			window.conn.send("v:" + version);
+			conn.send("v:" + version);
 			if (!localStorage.username) {
-				window.conn.send("u:" + username);
+				conn.send("u:" + username);
 			} else {
-				window.conn.send("u:" + localStorage.username);
+				conn.send("u:" + localStorage.username);
 				username = localStorage.username;
 				document.getElementById('username').value = localStorage.username;
 			}
 			$("#form").submit(function() {
-				if (!window.conn) {
+				if (!conn) {
 					return false;
 				}
 				if (!msg.val()) {
 					return false;
 				}
 				console.log("m:%s", document.getElementById('msg').value);
-				window.conn.send("m:" + document.getElementById('msg').value);
+				conn.send("m:" + document.getElementById('msg').value);
 				msg.val("");
 				return false;
 			});
 		};
 
-		window.conn.onclose = function(evt) {
+		conn.onclose = function(evt) {
 			appendLog($("<div><b>Connection closed.</b></div>"));
 			form.submit = function() {return false;};
 		};
 
-		window.conn.onmessage = function(evt) {
+		conn.onmessage = function(evt) {
 			console.log(evt);
-			queryUsers();
 			try {
 				var json = JSON.parse(evt.data);
 				var d = $('<div></div>');
@@ -78,10 +75,10 @@ $(function() {
 					d.html("<b>" + json.error + "</b>");
 					d.addClass('error');
 				} else {
-					if (json["u"] == username) {
-						d.html(parseBBCode("me: " + json["m"]));
+					if (json["user"] == username) {
+						d.html(parseBBCode("me: " + json["msg"]));
 					} else {
-						d.html(parseBBCode(json["u"] + ": " + json["m"]));
+						d.html(parseBBCode(json["user"] + ": " + json["msg"]));
 					}
 				}
 				d.children().each(function(){

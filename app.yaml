@@ -1,4 +1,4 @@
-application: expressionizr
+application: moechatclient
 version: 1
 runtime: php
 api_version: 1
@@ -6,15 +6,13 @@ threadsafe: yes
 
 handlers:
  - url: /
-   script: index.php
+   script: index.html
  - url: /index\.html
-   script: index.php
+   script: index.html
  - url: /css/*
    static_dir: css 
- - url: /ocr.php
-   script: ocr.php
- - url: /extensions
-   static_dir: extensions
- - url: /images/(.*\.(gif|png|jpg))
-   static_files: images/\1
+ - url: /js/*
+   static_dir: js
+ - url: /img/(.*\.(gif|png|jpg))
+   static_files: img/\1
    upload: images/(.*\.(gif|png|jpg))
