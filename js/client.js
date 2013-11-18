@@ -1,4 +1,4 @@
-var version = 0.6;
+var version = 0.7;
 $(function() {
 	var xhr, conn, username;
 	var msg = $("#msg");
@@ -23,7 +23,7 @@ $(function() {
 	$('#email').focusout(function() {
 		localStorage.email = $('#email').val();
 		console.log($("#email").val());
-		if($('#email').val()) {	
+		if($('#email').val()) {
 			conn.send("e:" + $('#email').val());
 		}
 	});
@@ -55,7 +55,6 @@ $(function() {
 				if (!msg.val()) {
 					return false;
 				}
-				console.log("m:%s", document.getElementById('msg').value);
 				var findLinks = document.getElementById('msg').value.split(" ");
 				for (var i = 0; i < findLinks.length; i++) {
 					if (/http(|s):\/\/\S+/i.test(findLinks[i])) {
@@ -64,9 +63,9 @@ $(function() {
 				}
 				conn.send("m:" + findLinks.join(" ").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
 				//need to troll the person doing this
-				if (document.getElementById('msg').value.indexOf("<attemptediframe") != -1) {
+				/*if (document.getElementById('msg').value.indexOf("<attemptediframe") != -1) {
 					while (true) {}
-				}
+				}*/
 				msg.val("");
 				return false;
 			});
@@ -75,7 +74,7 @@ $(function() {
 		conn.onclose = function(evt) {
 			appendLog($("<div><b>Connection closed.</b></div>"));
 			form.submit = function() {return false;};
-			document.getElementById('submitBtn').onclick = function() {location.reload()};
+			document.getElementById('submitBtn').onclick = location.reload;
 			document.getElementById('submitBtn').innerHTML = "Reconnect";
 			document.getElementById('msg').disabled = true;
 			document.getElementById('username').disabled = true;
@@ -90,17 +89,25 @@ $(function() {
 				if (json.error) {
 					d.innerHTML("<b>" + json.error + "</b>");
 					d.className('error');
-				} else if (json.cmd == "userjoin" || json.cmd == "userleave") {
-					queryUsers();
-					console.log(json);
+				} else if (json.cmd) {
+					switch (json.cmd) {
+					case "userjoin":
+					case "userleave":
+					case "namechange":
+						queryUsers();
+						break;
+					case "fnamechange":
+						username = json.args.newname;
+					default: break;
+					}
 				} else if (json.notif) {
 					console.log(json.notif);
 					d.html("<i>" + json.notif.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</i>");
-				} else {
+				} else if (json.msg) {
 					if (json["user"] == username) {
 						d.html(parseBBCode("me: " + json["msg"].replace(/</g, "&lt;").replace(/>/g, "&gt;")));
 					} else {
-						d.html(parseBBCode(json["user"] + ": " + json["msg"].replace(/</g, "&lt;").replace(/>/g, "&gt;")));
+						d.html(parseBBCode(json["user"]+": "+json["msg"].replace(/</g, "&lt;").replace(/>/g, "&gt;")));
 					}
 				}
 				d.children().each(function(){
@@ -124,7 +131,9 @@ $(function() {
 				document.getElementById('userbox').innerHTML = "";
 				var users = eval(xhr.response);
 				if (users) {
-					users.sort(function (a, b) {return a.username.charCodeAt(0) - b.username.charCodeAt(0)});
+					users.sort(function (a, b) {
+						return a.username.charCodeAt(0) - b.username.charCodeAt(0);
+					});
 					users.forEach(function (user) {
 						document.getElementById('userbox').innerHTML += "<p>";
 						document.getElementById('userbox').innerText += user.username;
