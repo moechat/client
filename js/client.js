@@ -56,7 +56,7 @@ $(function() {
 					return false;
 				}
 				console.log("m:%s", document.getElementById('msg').value);
-				conn.send("m:" + document.getElementById('msg').value.replace(/(iframe|frame)/g, "attemptediframe"));
+				conn.send("m:" + document.getElementById('msg').value.replace(/</g, "&lt;").replace(/>/g, "&gt;"));
 				//need to troll the person doing this
 				if (document.getElementById('msg').value.indexOf("<attemptediframe") != -1) {
 					while (true) {}
