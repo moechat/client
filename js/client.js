@@ -90,10 +90,9 @@ $(function() {
 				if (json.error) {
 					d.innerHTML("<b>" + json.error + "</b>");
 					d.className('error');
-				} else if (json.cmd == "userjoin") {
+				} else if (json.cmd == "userjoin" || json.cmd == "userleave") {
 					queryUsers();
 					console.log(json);
-					d.html("<i>" + json.args.name.replace(/</g, "&lt;").replace(/>/g, "&gt;") + " has joined the channel!</i>");
 				} else if (json.notif) {
 					console.log(json.notif);
 					d.html("<i>" + json.notif.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</i>");
