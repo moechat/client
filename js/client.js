@@ -69,11 +69,13 @@ $(function() {
 		conn.onmessage = function(evt) {
 			console.log(evt);
 			try {
-				var json = JSON.parse(evt.data);
+				var json = $.parseJSON(evt.data);
 				var d = $('<div></div>');
 				if (json.error) {
 					d.html("<b>" + json.error + "</b>");
 					d.addClass('error');
+				} else if (json.notif) {
+					d.html("<i>" + json.notif + "</i>");
 				} else {
 					if (json["user"] == username) {
 						d.html(parseBBCode("me: " + json["msg"]));
