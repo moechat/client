@@ -1,17 +1,9 @@
 $(function() {
 	var xhr;
 	var conn;
-<<<<<<< HEAD
 	var msg = $("#msg");
 	var log = $("#log");
 	var usersbox = $("#usersbox");
-=======
-	var msg = $('#msg');
-	var log = $('#log');
-	var msgwrap = $('#msgwrap');
-	var nameinput = $('#username');
-	var form = $('#form');
->>>>>>> 97c50059aee5290d09947d4b3740d5f48fcfbcc3
 	var username;
 
 	nameinput.focusout(function() {
@@ -28,8 +20,6 @@ $(function() {
 			log.scrollTop(msgwrap.height() - log.height);
 		}
 	}
-
-<<<<<<< HEAD
 	$('#username').focusout(function() {
 		if($('#username').val()) {
 			console.log($('#username').val());
