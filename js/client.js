@@ -6,7 +6,7 @@ $(function() {
 	var usersbox = $("#usersbox");
 	var msgwrap = $('#msgwrap');
 	function appendLog(msg) {
-		var doScroll = log.scrollTop() == document.getElementById('msgwrap') - log.height;
+		var doScroll = log.scrollTop() = document.getElementById('msgwrap') - log.height;
 		msgwrap.append(msg);
 		if (doScroll) {
 			log.scrollTop(msgwrap.height() - log.height);
