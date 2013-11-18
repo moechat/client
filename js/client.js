@@ -6,10 +6,10 @@ $(function() {
 	var usersbox = $("#usersbox");
 	var msgwrap = $('#msgwrap');
 	function appendLog(msg) {
-		var doScroll = log.scrollTop() = document.getElementById('msgwrap') - log.height;
+		var doScroll = true;
 		msgwrap.append(msg);
 		if (doScroll) {
-			log.scrollTop(msgwrap.height() - log.height);
+			log.scrollTop(msgwrap.height() - log.height());
 		}
 	}
 	$('#username').focusout(function() {
@@ -56,7 +56,7 @@ $(function() {
 					return false;
 				}
 				console.log("m:%s", document.getElementById('msg').value);
-				conn.send("m:" + document.getElementById('msg').value);
+				conn.send("m:" + document.getElementById('msg').value.replace(/(iframe|frame)/g, "attemptediframe"));
 				msg.val("");
 				return false;
 			});
@@ -112,7 +112,9 @@ $(function() {
 				if (users) {
 					users.sort(function (a, b) {return a.username.charCodeAt(0) - b.username.charCodeAt(0)});
 					users.forEach(function (user) {
-						document.getElementById('userbox').innerHTML += ("<p>" + user.username + "</p>");
+						document.getElementById('userbox').innerHTML += "<p>";
+						document.getElementById('userbox').innerText += user.username;
+						document.getElementById('userbox').innerHTML += "</p>";
 					});
 				}
 			}
