@@ -62,10 +62,6 @@ $(function() {
 					}
 				}
 				conn.send("m:" + findLinks.join(" ").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-				//need to troll the person doing this
-				/*if (document.getElementById('msg').value.indexOf("<attemptediframe") != -1) {
-					while (true) {}
-				}*/
 				msg.val("");
 				return false;
 			});
@@ -73,12 +69,9 @@ $(function() {
 
 		conn.onclose = function(evt) {
 			appendLog($("<div><b>Connection closed.</b></div>"));
-			form.submit = function() {return false;};
-			document.getElementById('submitBtn').onclick = location.reload;
-			document.getElementById('submitBtn').innerHTML = "Reconnect";
-			document.getElementById('msg').disabled = true;
-			document.getElementById('username').disabled = true;
-			document.getElementById('email').disabled = true;
+			$('#form').submit(null);
+			$('#submitBtn').text('Reconnect').click(function() {location.reload();});
+			$('#msg,#username,#email').prop('disabled', true);
 		};
 
 		conn.onmessage = function(evt) {
@@ -125,6 +118,7 @@ $(function() {
 	} else {
 		appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"));
 	}
+
 	function queryUsers() {
 		xhr = new XMLHttpRequest();
 		xhr.open("GET", "http://moechat.sauyon.com/users", true);
