@@ -36,8 +36,8 @@ $(function() {
 			if (!localStorage.email) {
 				conn.send("e:(blank)");
 			} else {
-				conn.send("e:" + localStorage.username);
-				document.getElementById('email').value = localStorage.email;
+				conn.send("e:" + localStorage.email);
+				$('#email').val(localStorage.email);
 			}
 			username = "anon" + Math.floor(Math.random() * 1000000);
 			if (!localStorage.username) {
