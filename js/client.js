@@ -1,4 +1,4 @@
-var version = 0.5;
+var version = 0.6;
 $(function() {
 	var xhr, conn, username;
 	var msg = $("#msg");
@@ -75,18 +75,19 @@ $(function() {
 		conn.onmessage = function(evt) {
 			console.log(evt);
 			try {
-				var json = $.parseJSON(evt.data);
+				var json = JSON.parse(evt.data);
 				var d = $('<div></div>');
 				if (json.error) {
-					d.html("<b>" + json.error + "</b>");
-					d.addClass('error');
+					d.innerHTML("<b>" + json.error + "</b>");
+					d.className('error');
 				} else if (json.notif) {
-					d.html("<i>" + json.notif + "</i>");
+					console.log(json.notif);
+					d.html("<i>" + json.notif.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</i>");
 				} else {
 					if (json["user"] == username) {
-						d.html(parseBBCode("me: " + json["msg"]));
+						d.html(parseBBCode("me: " + json["msg"].replace(/</g, "&lt;").replace(/>/g, "&gt;")));
 					} else {
-						d.html(parseBBCode(json["user"] + ": " + json["msg"]));
+						d.html(parseBBCode(json["user"] + ": " + json["msg"].replace(/</g, "&lt;").replace(/>/g, "&gt;")));
 					}
 				}
 				d.children().each(function(){
