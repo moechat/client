@@ -72,16 +72,18 @@ $(function() {
 			console.log(evt);
 			queryUsers();
 			try {
-				var json = JSON.parse(evt.data);
+				var json = $.parseJSON(evt.data);
 				var d = $('<div></div>');
 				if (json.error) {
 					d.html("<b>" + json.error + "</b>");
 					d.addClass('error');
+				} else if (json.notif) {
+					d.html("<i>" + json.notif + "</i>");
 				} else {
-					if (json["u"] == username) {
-						d.html(parseBBCode("me: " + json["m"]));
+					if (json["user"] == username) {
+						d.html(parseBBCode("me: " + json["msg"]));
 					} else {
-						d.html(parseBBCode(json["u"] + ": " + json["m"]));
+						d.html(parseBBCode(json["user"] + ": " + json["msg"]));
 					}
 				}
 				d.children().each(function(){
