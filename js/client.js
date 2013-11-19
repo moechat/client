@@ -33,35 +33,23 @@ $(function() {
 		conn.onopen = function() {
 			console.log("Connected!");
 			queryUsers();
-			if (!localStorage.email) {
-				conn.send("e:(blank)");
-			} else {
-				conn.send("e:" + localStorage.email);
-				$('#email').val(localStorage.email);
-			}
-			username = "anon" + Math.floor(Math.random() * 1000000);
-			if (!localStorage.username) {
-				conn.send("u:" + username);
-				document.getElementById('username').value = username;
-				localStorage.username = username;
-			} else {
-				conn.send("u:" + localStorage.username);
-				username = localStorage.username;
-				document.getElementById('username').value = localStorage.username;
-			}
-			conn.send("v:" + version);
-			$("#form").submit(function() {
-				if (!conn) {
-					return false;
-				}
-				if (!msg.val()) {
-					return false;
-				}
-				var findLinks = document.getElementById('msg').value.split(" ");
 
-				conn.send("m:" + findLinks.join(" ").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
-				msg.val("");
-				return false;
+			var email = localStorage.email ? localStorage.email : '';
+			$('#email').val(email);
+			if(email) conn.send("e:" + email);
+
+			username = localStorage.username ? localStorage.username : "anon" + Math.floor(Math.random() * 1000000);
+			$('#username').val(username);
+			conn.send("u:" + username);
+
+			conn.send("v:" + version);
+			$("#form").submit(function(evt) {
+				evt.preventDefault();
+				if (!conn) return;
+				if (!msg.val()) return;
+
+				conn.send('m:' + msg.val());
+				msg.val('');
 			});
 		};
 
@@ -95,7 +83,7 @@ $(function() {
 					}
 				} else if (json.notif) {
 					console.log(json.notif);
-					d.html("<i>" + json.notif.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</i>");
+					d.html("<i>" + html_sanitize(json.notif) + "</i>");
 				} else if (json.msg) {
 					if (json["user"] == username) {
 						d.html(parseBBCode("me: " + html_sanitize(json["msg"])));
@@ -117,7 +105,7 @@ $(function() {
 		xhr.open("GET", "http://moechat.sauyon.com/users", true);
 		xhr.onreadystatechange = function (e) {
 			if (xhr.readyState == 4) {
-				document.getElementById('userbox').innerHTML = "";
+				$('#userbox').html('');
 				var users = eval(xhr.response);
 				if (users) {
 					users.sort(function (a, b) {
@@ -127,7 +115,7 @@ $(function() {
 					users.forEach(function (user) {
 						var e = $('<div></div>');
 						var md5 = $.md5(user.email.toLowerCase().trim());
-						var prof = 'http://www.gravatar.com/avatar/'+md5;
+						var prof = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 						e.html('<div class="user"><img src="'+prof+'"><span><br/ >'+user.username+'</span></div>');
 						$('#userbox').append(e);
 					});
