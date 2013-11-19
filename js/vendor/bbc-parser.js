@@ -1,14 +1,14 @@
 // -----------------------------------------------------------------------
-// Copyright (c) 2008, Stone Steps Inc. 
+// Copyright (c) 2008, Stone Steps Inc.
 // All rights reserved
 // http://www.stonesteps.ca/legal/bsd-license/
 //
 // This is a BBCode parser written in JavaScript. The parser is intended
-// to demonstrate how to parse text containing BBCode tags in one pass 
+// to demonstrate how to parse text containing BBCode tags in one pass
 // using regular expressions.
 //
-// The parser may be used as a backend component in ASP or in the browser, 
-// after the text containing BBCode tags has been served to the client. 
+// The parser may be used as a backend component in ASP or in the browser,
+// after the text containing BBCode tags has been served to the client.
 //
 // Following BBCode expressions are recognized:
 //
@@ -30,9 +30,9 @@
 // [blockquote=http://blogs.stonesteps.ca/showpost.asp?pid=33]block quote[/blockquote]
 // [blockquote]block quote[/blockquote]
 //
-// [pre]formatted 
+// [pre]formatted
 //     text[/pre]
-// [code]if(a == b) 
+// [code]if(a == b)
 //   print("done");[/code]
 //
 // text containing [noparse] [brackets][/noparse]
@@ -59,15 +59,13 @@ var uri_re = /^[-;\/\?:@&=\+\$,_\.!~\*'\(\)%0-9a-z]{1,512}$/i;
 var postfmt_re = /([\r\n])|(?:\[([a-z]{1,16})(?:=([^\x00-\x1F"'\(\)<>\[\]]{1,256}))?\])|(?:\[\/([a-z]{1,16})\])/ig;
 
 // stack frame object
-function taginfo_t(bbtag, etag)
-{
+function taginfo_t(bbtag, etag) {
    this.bbtag = bbtag;
    this.etag = etag;
 }
 
 // check if it's a valid BBCode tag
-function isValidTag(str)
-{
+function isValidTag(str) {
    if(!str || !str.length)
       return false;
 
@@ -143,7 +141,7 @@ function textToHtmlCB(mstr, m1, m2, m3, m4, offset, string)
 
          case "url":
             opentags.push(new taginfo_t(m2, "</a>"));
-            
+
             // check if there's a valid option
             if(m3 && uri_re.test(m3)) {
                // if there is, output a complete start anchor tag
@@ -151,7 +149,7 @@ function textToHtmlCB(mstr, m1, m2, m3, m4, offset, string)
                return "<a href=\"" + m3 + "\">";
             }
 
-            // otherwise, remember the URL offset 
+            // otherwise, remember the URL offset
             urlstart = mstr.length + offset;
 
             // and treat the text following [url] as a URL
@@ -175,7 +173,7 @@ function textToHtmlCB(mstr, m1, m2, m3, m4, offset, string)
             // [samp], [b], [i] and [u] don't need special processing
             opentags.push(new taginfo_t(m2, "</" + m2 + ">"));
             return "<" + m2 + ">";
-            
+
       }
    }
 
@@ -189,11 +187,11 @@ function textToHtmlCB(mstr, m1, m2, m3, m4, offset, string)
             noparse = false;
             return "";
          }
-         
+
          // otherwise just output the original text
          return "[/" + m4 + "]";
       }
-      
+
       // highlight mismatched end tags
       if(!opentags.length || opentags[opentags.length-1].bbtag != m4)
          return "<span style=\"color: red\">[/" + m4 + "]</span>";
@@ -202,7 +200,7 @@ function textToHtmlCB(mstr, m1, m2, m3, m4, offset, string)
          // if there was no option, use the content of the [url] tag
          if(urlstart > 0)
             return "\">" + string.substr(urlstart, offset-urlstart) + opentags.pop().etag;
-         
+
          // otherwise just close the tag
          return opentags.pop().etag;
       }
@@ -236,17 +234,17 @@ function parseBBCode(post)
    // reset noparse, if it was unbalanced
    if(noparse)
       noparse = false;
-   
+
    // if there are any unbalanced tags, make sure to close them
    if(opentags.length) {
       endtags = new String();
-      
+
       // if there's an open [url] at the top, close it
       if(opentags[opentags.length-1].bbtag == "url") {
          opentags.pop();
          endtags += "\">" + post.substr(urlstart, post.length-urlstart) + "</a>";
       }
-      
+
       // close remaining open tags
       while(opentags.length)
          endtags += opentags.pop().etag;
