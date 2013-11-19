@@ -130,6 +130,7 @@ $(function() {
 	}
 
 	function appendUser(username, email) {
+		if($('#user-'+username).length != 0) return;
 		var e = $('<div></div>');
 		var md5 = $.md5(email.toLowerCase().trim());
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
