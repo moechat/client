@@ -1,4 +1,6 @@
-var version = 0.7;
+var $, localStorage, html_sanitize, parseBBCode;
+
+var version = 0.8;
 $(function() {
 	var xhr, conn, username;
 	var msg = $("#msg");
@@ -56,7 +58,7 @@ $(function() {
 		conn.onclose = function(evt) {
 			appendLog($("<div><b>Connection closed.</b></div>"));
 			$('#form').submit(null);
-			$('#submitBtn').text('Reconnect').click(function() {location.reload();});
+			$('#submitBtn').text('Reconnect').click(function() {window.location.reload();});
 			$('#msg,#username,#email').prop('disabled', true);
 		};
 
@@ -71,9 +73,16 @@ $(function() {
 				} else if (json.cmd) {
 					switch (json.cmd) {
 					case "userjoin":
+						appendUser(json.args.name, json.args.email);
+						break;
 					case "userleave":
+						removeUser(json.args.name);
+						break;
 					case "namechange":
-						queryUsers();
+						changeName(json.args.currname, json.args.newname);
+						break;
+					case "emailchange":
+						changeEmail(json.args.name, json.args.email);
 						break;
 					case "fnamechange":
 						username = json.args.newname;
@@ -105,23 +114,42 @@ $(function() {
 		xhr.open("GET", "http://moechat.sauyon.com/users", true);
 		xhr.onreadystatechange = function (e) {
 			if (xhr.readyState == 4) {
-				$('#userbox').html('');
+				usersbox.html('');
 				var users = eval(xhr.response);
 				if (users) {
 					users.sort(function (a, b) {
 						return a.username.charCodeAt(0) - b.username.charCodeAt(0);
 					});
-					$('#userbox').html('');
 					users.forEach(function (user) {
-						var e = $('<div></div>');
-						var md5 = $.md5(user.email.toLowerCase().trim());
-						var prof = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
-						e.html('<div class="user"><img src="'+prof+'"><span><br/ >'+user.username+'</span></div>');
-						$('#userbox').append(e);
+						appendUser(user.username, user.email);
 					});
 				}
 			}
 		};
 		xhr.send(null);
+	}
+
+	function appendUser(username, email) {
+		var e = $('<div></div>');
+		var md5 = $.md5(email.toLowerCase().trim());
+		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
+
+		e.html('<div id="user-'+username+'" class="user"><img src="'+imgurl+'"><span><br/ >'+username+'</span></div>');
+		usersbox.append(e);
+	}
+
+	function removeUser(username) {
+		$('#user-'+username).remove();
+	}
+
+	function changeName(oldname, newname) {
+		$('#user-'+username).attr('id', 'user-'+newname).children('span').text(newname);
+	}
+
+	function changeEmail(name, newemail) {
+		var md5 = $.md5(newemail.toLowerCase().trim());
+		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
+
+		$('#user-'+username+' img').attr('src', imgurl);
 	}
 });
