@@ -42,6 +42,8 @@ $(function() {
 			username = "anon" + Math.floor(Math.random() * 1000000);
 			if (!localStorage.username) {
 				conn.send("u:" + username);
+				document.getElementById('username').value = username;
+				localStorage.username = username;
 			} else {
 				conn.send("u:" + localStorage.username);
 				username = localStorage.username;
