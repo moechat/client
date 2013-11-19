@@ -34,7 +34,6 @@ $(function() {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		conn.onopen = function() {
 			console.log("Connected!");
-			queryUsers();
 
 			var email = localStorage.email ? localStorage.email : '';
 			$('#email').val(email);
@@ -53,6 +52,8 @@ $(function() {
 				conn.send('m:' + msg.val());
 				msg.val('');
 			});
+
+			queryUsers();
 		};
 
 		conn.onclose = function(evt) {
@@ -148,6 +149,8 @@ $(function() {
 	}
 
 	function changeEmail(name, newemail) {
+		if($('#user-'+username).length == 0) return;
+
 		var md5 = $.md5(newemail.toLowerCase().trim());
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
