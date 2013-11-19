@@ -5,7 +5,7 @@ $(function() {
 	var xhr, conn, username;
 	var msg = $("#msg");
 	var log = $("#log");
-	var usersbox = $("#usersbox");
+	var userbox = $("#userbox");
 	var msgwrap = $('#msgwrap');
 	function appendLog(msg) {
 		var doScroll = true;
@@ -114,7 +114,7 @@ $(function() {
 		xhr.open("GET", "http://moechat.sauyon.com/users", true);
 		xhr.onreadystatechange = function (e) {
 			if (xhr.readyState == 4) {
-				usersbox.html('');
+				userbox.html('');
 				var users = eval(xhr.response);
 				if (users) {
 					users.sort(function (a, b) {
@@ -135,7 +135,7 @@ $(function() {
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
 		e.html('<div id="user-'+username+'" class="user"><img src="'+imgurl+'"><span><br/ >'+username+'</span></div>');
-		usersbox.append(e);
+		userbox.append(e);
 	}
 
 	function removeUser(username) {
