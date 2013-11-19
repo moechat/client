@@ -7,6 +7,9 @@ $(function() {
 	var log = $("#log");
 	var userbox = $("#userbox");
 	var msgwrap = $('#msgwrap');
+
+	queryUsers();
+
 	function appendLog(msg) {
 		var doScroll = true;
 		msgwrap.append(msg);
@@ -44,6 +47,7 @@ $(function() {
 			conn.send("u:" + username);
 
 			conn.send("v:" + version);
+
 			$("#form").submit(function(evt) {
 				evt.preventDefault();
 				if (!conn) return;
@@ -52,8 +56,6 @@ $(function() {
 				conn.send('m:' + msg.val());
 				msg.val('');
 			});
-
-			queryUsers();
 		};
 
 		conn.onclose = function(evt) {
