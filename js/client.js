@@ -102,7 +102,7 @@ $(function() {
 				}
 				appendLog(d);
 			} catch (e) {
-				appendLog($('<div class="error"><div/>').text(evt.data));
+				appendLog($('<div class="error"><div/>').text('Error '+e+' while parsing message: '+evt.data));
 			}
 		};
 	} else {
