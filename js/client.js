@@ -56,11 +56,7 @@ $(function() {
 					return false;
 				}
 				var findLinks = document.getElementById('msg').value.split(" ");
-				for (var i = 0; i < findLinks.length; i++) {
-					if (/http(|s):\/\/\S+/i.test(findLinks[i])) {
-						findLinks[i] = "[url=" + findLinks[i] + "]" + findLinks[i] + "[/url]";
-					}
-				}
+
 				conn.send("m:" + findLinks.join(" ").replace(/</g, "&lt;").replace(/>/g, "&gt;"));
 				msg.val("");
 				return false;
@@ -100,16 +96,11 @@ $(function() {
 					d.html("<i>" + json.notif.replace(/</g, "&lt;").replace(/>/g, "&gt;") + "</i>");
 				} else if (json.msg) {
 					if (json["user"] == username) {
-						d.html(parseBBCode("me: " + json["msg"].replace(/</g, "&lt;").replace(/>/g, "&gt;")));
+						d.html(parseBBCode("me: " + html_sanitize(json["msg"])));
 					} else {
-						d.html(parseBBCode(json["user"]+": "+json["msg"].replace(/</g, "&lt;").replace(/>/g, "&gt;")));
+						d.html(parseBBCode(json["user"]+": "+html_sanitize(json["msg"])));
 					}
 				}
-				d.children().each(function(){
-					this.onload = null;
-					this.onchange = null;
-					this.onclick = null;
-				});
 				appendLog(d);
 			} catch (e) {
 				appendLog($('<div class="error"><div/>').text(evt.data));
