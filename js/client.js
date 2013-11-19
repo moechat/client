@@ -135,7 +135,7 @@ $(function() {
 						var e = $('<div></div>');
 						var md5 = $.md5(user.email.toLowerCase().trim());
 						var prof = 'http://www.gravatar.com/avatar/'+md5;
-						e.html('<div class="user"><img src="'+prof+'"><span>'+user.username+'</span></div>');
+						e.html('<div class="user"><img src="'+prof+'"><span><br/ >'+user.username+'</span></div>');
 						$('#userbox').append(e);
 					});
 				}
