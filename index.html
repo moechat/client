@@ -17,15 +17,18 @@
 	</head>
 	<body>
 		<div class="row">
-			<div class="large-12 columns">
+			<div class="large-10 columns">
 				<h2><a href="#" style="color:#1d908a;">MoeChat</a></h2>
 				<p>This is version {{.Version}}</p>
-				<hr />
 			</div>
+			<div class="large-2 columns">
+				<button class="tiny right">Settings</button>
+			</div>
+			<hr>
 		</div>
-		<div class="row" style="height: 80%;min-height:500px">
-			<div class="large-8 columns" style="height:inherit;min-height:500px">
-				<div class="panel" style="height:100%;min-height:500px">
+		<div id="content" class="row">
+			<div class="large-8 columns">
+				<div class="panel">
 					<div id="roomwrap">
 						<div id="room-0" class="room current" data-id="0">
 							<h3>Lobby</h3>
@@ -58,12 +61,10 @@
 			</div>
 			<div id="chatroom-column" class="large-4 columns">
 				<h3>Users</h3>
-				<ul id="userbox" class="side-nav">
-					<li id="lobby-button" data-id="0" class="room active">
-						<div>Lobby</div>
-					</li>
-					<li class="divider"></li>
-				</ul>
+				<div id="roombox">
+					<div id="room-0" data-id="0" class="roombtn active">Lobby</div>
+				</div>
+				<div id="userbox"></div>
 			</div>
 		</div>
 		<script type="text/javascript">

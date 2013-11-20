@@ -4,6 +4,7 @@ var version = '0.11';
 $(function() {
 	var xhr, conn, username, userID;
 	var roomID = 0;
+	var users = Array();
 	var msg = $('#msg');
 	var userbox = $('#userbox');
 
@@ -46,7 +47,7 @@ $(function() {
 		if (e.ctrlKey && e.keyCode == 13) $('#form').submit();
 	});
 
-	$('#lobby-button').click(function() { switchRoom(0); });
+	$('#room-0').click(function() { switchRoom(0); });
 
 	if (window["WebSocket"]) {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
@@ -114,13 +115,19 @@ $(function() {
 					default: break;
 					}
 				} else if (json.notif) {
+					d.addClass('chat notif panel');
 					d.html("<i>" + html_sanitize(json.notif) + "</i>");
 					appendLog(d, json.targets);
 				} else if (json.msg) {
 					if (json.user == username) {
-						d.html(html_sanitize(parseBBCode("me: " + json.msg)));
+						d.addClass('me');
+						var msg = $('<div>');
+						msg.html(parseBBCode(html_sanitize(json.msg)));
+						msg.addClass('chat panel');
+						d.append(msg);
 					} else {
-						d.html(html_sanitize(parseBBCode(json.user+": "+json.msg)));
+						d.addClass('chat panel');
+						d.html(parseBBCode(json.user+": "+html_sanitize(json.msg)));
 					}
 					if(json.targets) json.targets.forEach(function(room) {
 						if($('#room-'+room).length == 0) createRoom(room);
@@ -129,11 +136,11 @@ $(function() {
 					appendLog(d, json.targets);
 				}
 			} catch (e) {
-				appendLog($('<div class="error"><div/>').text('Error '+e+' while parsing message: '+evt.data));
+				appendLog($('<div class="chat error panel"><div/>').text('Error "'+e+'" while parsing message: '+evt.data));
 			}
 		};
 	} else {
-		appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"));
+		appendLog($('<div class="chat error panel"><b>Your browser does not support WebSockets.</b></div>'));
 	}
 
 	function queryUsers() {
@@ -151,14 +158,21 @@ $(function() {
 
 	function appendUser(username, email, id) {
 		if($('#user-'+id).length != 0) return false;
-		var e = $('<li></li>');
+
+		var e = $('<div></div>');
 		var md5 = $.md5(email.toLowerCase().trim());
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
-		e.attr('id', 'user-'+id).addClass('user').data('id', id);
-		e.html('<div><img src="'+imgurl+'"><br><span>'+username+'</span></div>');
+		e.attr('id', 'user-'+id).addClass('userbtn').data('id', id);
+		e.html('<img src="'+imgurl+'"><span class="name">'+username+'</span>');
 		e.click(function(evt) { switchRoom(id); });
 		userbox.append(e);
+
+		users[id] = {
+			name: username,
+			email: email,
+			img: imgurl
+		};
 
 		return e;
 	}
@@ -168,7 +182,8 @@ $(function() {
 	}
 
 	function changeName(id, newname) {
-		$('#user-'+id).children('span').text(newname);
+		$('#user-'+id+' .name').text(newname);
+		users[id].name = newname;
 	}
 
 	function changeEmail(id, newemail) {
@@ -178,15 +193,18 @@ $(function() {
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
 		$('#user-'+id+' img').attr('src', imgurl);
+
+		users[id].email = newemail;
+		users[id].img = imgurl;
 	}
 
 	function switchRoom(id) {
 		if(id == roomID) return;
 		roomID = id;
 
-		$('#userbox .active').removeClass('active');
+		$('#chatroom-column .active').removeClass('active');
 		if(id) $('#user-'+id).addClass('active');
-		else $('#lobby-button').addClass('active');
+		else $('#room-0').addClass('active');
 
 		conn.send('t'+id);
 		$('.room.current').hide().removeClass('current');
@@ -200,8 +218,8 @@ $(function() {
 	function createRoom(id) {
 		var room = $('<div></div>');
 		room.attr('id', 'room-'+id).addClass('room');
-		room.html('<h3>'+$('#user-'+id+' span').html()+'</h3>' +
-		                 '<div class="log"><div class="msgwrap"></div></div>');
+		room.html('<h3>'+users[id].name+'</h3>' +
+		          '<div class="log"><div class="msgwrap"></div></div>');
 		room.hide();
 		$('#roomwrap').append(room);
 
