@@ -147,7 +147,7 @@ $(function() {
 	}
 
 	function changeName(oldname, newname) {
-		$('#user-'+username).attr('id', 'user-'+newname).children('span').text(newname);
+		$('#user-'+oldname).attr('id', 'user-'+newname).children('span').text(newname);
 	}
 
 	function changeEmail(name, newemail) {
