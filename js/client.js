@@ -112,7 +112,7 @@ $(function() {
 					}
 				} else if (json.notif) {
 					d.html("<i>" + html_sanitize(json.notif) + "</i>");
-					appendLog(d, -1);
+					appendLog(d, json.target);
 				} else if (json.msg) {
 					if (json.user == username) {
 						d.html(html_sanitize(parseBBCode("me: " + json.msg)));
