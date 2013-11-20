@@ -9,7 +9,7 @@
 		<script src="js/vendor/jquery.md5.js"></script>
     <script src="js/vendor/html4-defs.js"></script>
 		<script src="js/vendor/html-sanitizer.js"></script>
-		<script src="js/client.js?v=0.0.9"></script>
+		<script src="js/client.js?v=0.10"></script>
 		<script src="js/vendor/custom.modernizr.js"></script>
 		<script type="text/javascript" src="js/vendor/bbc-parser.js"></script>
 		<meta charset="utf-8" />
@@ -26,12 +26,16 @@
 		</div>
 		<div class="row" style="height: 80%;min-height:500px">
 			<div class="large-10 columns" style="height:inherit;min-height:500px">
-				<h3>Chat</h3>
 				<div class="row" style="height:100%">
 					<div class="large-12 columns" style="height:100%;min-height:500px">
 						<div class="panel" style="height:100%;min-height:500px">
-							<div id="log">
-								<div id="msgwrap"></div>
+							<div id="roomwrap">
+								<div id="room-0" class="room current" data-id="0">
+									<h3>Lobby</h3>
+									<div class="log">
+										<div class="msgwrap"></div>
+									</div>
+								</div>
 							</div>
 							<form id="form" style="margin-top:10px">
 								<span><label for="username" style="display:inline">Name: </label><input type="text" id="username" value="" placeholder="Your name!" style="display:inline;width:50%" /></span><br />
@@ -45,7 +49,9 @@
 			</div>
 			<div class="large-2 columns">
 				<h3>Users</h3>
-				<div id="userbox"></div>
+				<div id="userbox">
+					<div id="lobby-button" data-id="0" class="room selected">Lobby</div>
+				</div>
 			</div>
 		</div>
 		<script type="text/javascript">

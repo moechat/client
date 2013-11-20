@@ -1,12 +1,14 @@
 var $, localStorage, html_sanitize, parseBBCode;
 
-var version = '0.0.9';
+
+var version = '0.10';
 $(function() {
-	var xhr, conn, username;
-	var msg = $("#msg");
-	var log = $("#log");
-	var userbox = $("#userbox");
-	var msgwrap = $('#msgwrap');
+	var xhr, conn, username, userID;
+	var msg = $('#msg');
+	var currentRoom = $('#room-0');
+	var log = currentRoom.children('.log');
+	var userbox = $('#userbox');
+	var msgwrap = currentRoom.children('.msgwrap');
 
 	queryUsers();
 
@@ -21,7 +23,7 @@ $(function() {
 		console.log($('#username').val());
 		localStorage.username = $('#username').val();
 		if($('#username').val()) {
-			conn.send("u:" + $('#username').val());
+			conn.send("u" + $('#username').val());
 			username = $('#username').val();
 		}
 	});
@@ -29,9 +31,10 @@ $(function() {
 		localStorage.email = $('#email').val();
 		console.log($("#email").val());
 		if($('#email').val()) {
-			conn.send("e:" + $('#email').val());
+			conn.send("e" + $('#email').val());
 		}
 	});
+	$('#lobby-button').click(function() { switchRoom(0); });
 
 	if (window["WebSocket"]) {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
@@ -40,20 +43,20 @@ $(function() {
 
 			var email = localStorage.email ? localStorage.email : '';
 			$('#email').val(email);
-			if(email) conn.send("e:" + email);
+			if(email) conn.send("e" + email);
 
 			username = localStorage.username ? localStorage.username : "anon" + Math.floor(Math.random() * 1000000);
 			$('#username').val(username);
-			conn.send("u:" + username);
+			conn.send("u" + username);
 
-			conn.send("v:" + version);
+			conn.send("v" + version);
 
 			$("#form").submit(function(evt) {
 				evt.preventDefault();
 				if (!conn) return;
 				if (!msg.val()) return;
 
-				conn.send('m:' + msg.val());
+				conn.send('m' + msg.val());
 				msg.val('');
 			});
 		};
@@ -76,21 +79,27 @@ $(function() {
 				} else if (json.cmd) {
 					switch (json.cmd) {
 					case "userjoin":
-						appendUser(json.args.name, json.args.email, json.args.id);
+						if(json.args.id != userID)
+							appendUser(json.args.name, json.args.email, json.args.id);
 						break;
 					case "userleave":
-						removeUser(json.args.id);
+						if(json.args.id != userID)
+							removeUser(json.args.id);
 						break;
 					case "namechange":
-						changeName(json.args.id, json.args.newname);
+						if(json.args.id != userID)
+							changeName(json.args.id, json.args.newname);
 						break;
 					case "emailchange":
-						changeEmail(json.args.id, json.args.email);
+						if(json.args.id != userID)
+							changeEmail(json.args.id, json.args.email);
 						break;
 					case "fnamechange":
 						username = json.args.newname;
 						$('#username').val(username);
 						break;
+					case "idset":
+						userID = json.args.id;
 					default: break;
 					}
 				} else if (json.notif) {
@@ -117,7 +126,6 @@ $(function() {
 		xhr.open("GET", "http://moechat.sauyon.com/users", true);
 		xhr.onreadystatechange = function (e) {
 			if (xhr.readyState == 4) {
-				userbox.html('');
 				var users = eval(xhr.response);
 				if (users) {
 					users.sort(function (a, b) {
@@ -138,7 +146,9 @@ $(function() {
 		var md5 = $.md5(email.toLowerCase().trim());
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
-		e.html('<div id="user-'+id+'" class="user"><img src="'+imgurl+'"><span><br/ >'+username+'</span></div>');
+		e.attr('id', 'user-'+id).addClass('user');
+		e.html('<img src="'+imgurl+'"><br><span>'+username+'</span>');
+		e.click(function(evt) { switchRoom(id); });
 		userbox.append(e);
 	}
 
@@ -157,5 +167,27 @@ $(function() {
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
 		$('#user-'+id+' img').attr('src', imgurl);
+	}
+
+	function switchRoom(id) {
+		if(id == currentRoom.data('id')) return;
+
+		$('#userbox .selected').removeClass('selected');
+		if(id) $('#user-'+id).addClass('selected');
+		else $('#lobby-button').addClass('selected');
+
+		conn.send('t'+id);
+		$('.room.current').hide().removeClass('current');
+		var currentRoom = $('#room-'+id);
+
+		if(currentRoom.length == 0) {
+			currentRoom = $('<div></div>');
+			currentRoom.attr('id', 'room-'+id).addClass('room current');
+			currentRoom.html('<h3>'+$('user-'+id+' span').html()+'</h3>' +
+			                 '<div class="log"><div class="msgwrap"></div></div>');
+			$('#roomwrap').append(currentRoom);
+		} else {
+			currentRoom.show().addClass('current');
+		}
 	}
 });
