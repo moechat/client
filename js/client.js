@@ -47,7 +47,7 @@ $(function() {
 		if (e.ctrlKey && e.keyCode == 13) $('#form').submit();
 	});
 
-	$('#room-0').click(function() { switchRoom(0); });
+	$('#roombtn-0').click(function() { switchRoom(0); });
 
 	if (window["WebSocket"]) {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
@@ -204,7 +204,7 @@ $(function() {
 
 		$('#chatroom-column .active').removeClass('active');
 		if(id) $('#user-'+id).addClass('active');
-		else $('#room-0').addClass('active');
+		else $('#roombtn-0').addClass('active');
 
 		conn.send('t'+id);
 		$('.room.current').hide().removeClass('current');
