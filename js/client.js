@@ -12,20 +12,16 @@ $(function() {
 	function appendLog(msg, rooms) {
 		var log, msgwrap;
 		if(rooms) {
-			log = new Array();
-			msgwrap = new Array();
 			rooms.forEach(function(room) {
-				log = log.concat($('#room-'+room+' .log'));
-				msgwrap = msgwrap.concat($('#room-'+room+' .msgwrap'));
+				log = $('#room-'+room+' .log');
+				msgwrap = $('#room-'+room+' .msgwrap');
+				msgwrap.append(msg);
+				log.scrollTop(msgwrap.height() - log.height());
 			});
 		} else {
 			log = $('.log');
 			msgwrap = $('.msgwrap');
-		}
-
-		var doScroll = true;
-		msgwrap.append(msg);
-		if (doScroll) {
+			msgwrap.append(msg);
 			log.scrollTop(msgwrap.height() - log.height());
 		}
 	}
@@ -72,7 +68,7 @@ $(function() {
 		};
 
 		conn.onclose = function(evt) {
-			appendLog($("<div><b>Connection closed.</b></div>"), -1);
+			appendLog($("<div><b>Connection closed.</b></div>"));
 			$('#form').submit(null);
 			$('#submitBtn').text('Reconnect').click(function() {window.location.reload();});
 			$('#msg,#username,#email').prop('disabled', true);
@@ -129,11 +125,11 @@ $(function() {
 					appendLog(d, json.targets);
 				}
 			} catch (e) {
-				appendLog($('<div class="error"><div/>').text('Error '+e+' while parsing message: '+evt.data), -1);
+				appendLog($('<div class="error"><div/>').text('Error '+e+' while parsing message: '+evt.data));
 			}
 		};
 	} else {
-		appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"), -1);
+		appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"));
 	}
 
 	function queryUsers() {
