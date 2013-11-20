@@ -14,20 +14,44 @@ body {
   left: 0.5em;
   right: 0.5em;
   bottom: 3em;
-	height: 500px;
+	height: 450px;
   overflow-y: auto;
 	overflow-x: hidden;
 }
 
-.error {
-	color: red;
+#chatroom-column h3 {
+	text-align: center;
 }
 
-#form {
-  padding: 0 0.5em 0 0.5em;
-  margin: 0;
-  bottom: 1em;
-  left: 0px;
-  width: 100%;
-  overflow: hidden;
+#userbox div {
+	padding: 10px 0;
+	border: 1px solid #d9d9d9;
+	border-left: none;
+	border-bottom: none;
+	margin-left: -31px;
+	padding-left: 31px;
+	text-align: center;
+}
+
+#userbox div:last-child {
+	border-bottom: 1px solid #d9d9d9;
+}
+
+#userbox li.active div {
+	position: relative;
+	background: #f2f2f2;
+}
+
+#msg {
+	height: auto;
+}
+
+#form button {
+	float: right;
+	margin-bottom: 0;
+	margin-left: 20px;
+}
+
+.error {
+	color: red;
 }

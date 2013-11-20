@@ -25,6 +25,7 @@ $(function() {
 			log.scrollTop(msgwrap.height() - log.height());
 		}
 	}
+
 	$('#username').focusout(function() {
 		console.log($('#username').val());
 		localStorage.username = $('#username').val();
@@ -40,13 +41,16 @@ $(function() {
 			conn.send("e" + $('#email').val());
 		}
 	});
+
+	msg.keydown(function (e) {
+		if (e.ctrlKey && e.keyCode == 13) $('#form').submit();
+	});
+
 	$('#lobby-button').click(function() { switchRoom(0); });
 
 	if (window["WebSocket"]) {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		conn.onopen = function() {
-			console.log("Connected!");
-
 			var email = localStorage.email ? localStorage.email : '';
 			$('#email').val(email);
 			if(email) conn.send("e" + email);
@@ -70,7 +74,7 @@ $(function() {
 		conn.onclose = function(evt) {
 			appendLog($("<div><b>Connection closed.</b></div>"));
 			$('#form').submit(null);
-			$('#submitBtn').text('Reconnect').click(function() {window.location.reload();});
+			$('#send-btn').text('Reconnect').click(function() {window.location.reload();});
 			$('#msg,#username,#email').prop('disabled', true);
 		};
 
@@ -133,34 +137,30 @@ $(function() {
 	}
 
 	function queryUsers() {
-		xhr = new XMLHttpRequest();
-		xhr.open("GET", "http://moechat.sauyon.com/users", true);
-		xhr.onreadystatechange = function (e) {
-			if (xhr.readyState == 4) {
-				var users = eval(xhr.response);
-				if (users) {
-					users.sort(function (a, b) {
-						return a.username.charCodeAt(0) - b.username.charCodeAt(0);
-					});
-					users.forEach(function (user) {
-						appendUser(user.username, user.email, user.id);
-					});
-				}
+		$.ajax('http://moechat.sauyon.com/users', {
+			async: false,
+			crossDomain: false,
+			success: function(data) {
+				if (!data) return;
+				data.forEach(function (user) {
+					appendUser(user.username, user.email, user.id);
+				});
 			}
-		};
-		xhr.send(null);
+		});
 	}
 
 	function appendUser(username, email, id) {
-		if($('#user-'+id).length != 0) return;
-		var e = $('<div></div>');
+		if($('#user-'+id).length != 0) return false;
+		var e = $('<li></li>');
 		var md5 = $.md5(email.toLowerCase().trim());
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
-		e.attr('id', 'user-'+id).addClass('user');
-		e.html('<img src="'+imgurl+'"><br><span>'+username+'</span>');
+		e.attr('id', 'user-'+id).addClass('user').data('id', id);
+		e.html('<div><img src="'+imgurl+'"><br><span>'+username+'</span></div>');
 		e.click(function(evt) { switchRoom(id); });
 		userbox.append(e);
+
+		return e;
 	}
 
 	function removeUser(id) {
@@ -184,9 +184,9 @@ $(function() {
 		if(id == roomID) return;
 		roomID = id;
 
-		$('#userbox .selected').removeClass('selected');
-		if(id) $('#user-'+id).addClass('selected');
-		else $('#lobby-button').addClass('selected');
+		$('#userbox .active').removeClass('active');
+		if(id) $('#user-'+id).addClass('active');
+		else $('#lobby-button').addClass('active');
 
 		conn.send('t'+id);
 		$('.room.current').hide().removeClass('current');
