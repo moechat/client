@@ -1,11 +1,10 @@
 var $, localStorage, html_sanitize, parseBBCode;
 
-
+var currentRoom = $('#room-0');
 var version = '0.10';
 $(function() {
 	var xhr, conn, username, userID;
 	var msg = $('#msg');
-	var currentRoom = $('#room-0');
 	var log = currentRoom.children('.log');
 	var userbox = $('#userbox');
 	var msgwrap = currentRoom.children('.msgwrap');
