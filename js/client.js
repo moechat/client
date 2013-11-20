@@ -1,6 +1,7 @@
 var $, localStorage, html_sanitize, parseBBCode;
 
 var currentRoom = $('#room-0');
+var roomID = 0;
 var version = '0.10';
 $(function() {
 	var xhr, conn, username, userID;
@@ -169,7 +170,7 @@ $(function() {
 	}
 
 	function switchRoom(id) {
-		if(id == currentRoom.data('id')) return;
+		if(id == roomID) return;
 
 		$('#userbox .selected').removeClass('selected');
 		if(id) $('#user-'+id).addClass('selected');
