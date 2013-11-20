@@ -6,9 +6,9 @@ var version = '0.10';
 $(function() {
 	var xhr, conn, username, userID;
 	var msg = $('#msg');
-	var log = currentRoom.children('.log');
+	var log = $('.log');
 	var userbox = $('#userbox');
-	var msgwrap = currentRoom.children('.msgwrap');
+	var msgwrap = $('.msgwrap');
 
 	queryUsers();
 
@@ -186,6 +186,8 @@ $(function() {
 			currentRoom.attr('id', 'room-'+id).addClass('room current');
 			currentRoom.html('<h3>'+$('#user-'+id+' span').html()+'</h3>' +
 			                 '<div class="log"><div class="msgwrap"></div></div>');
+			log = currentRoom.children('.log');
+			msgwrap = currentRoom.children('.msgwrap');
 			$('#roomwrap').append(currentRoom);
 		} else {
 			currentRoom.show().addClass('current');
