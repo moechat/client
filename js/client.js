@@ -15,6 +15,7 @@ $(function() {
 			log = $('.log');
 			msgwrap = $('.msgwrap');
 		} else {
+			if($('#room-'+room).length == 0) createRoom(room);
 			log = $('#room-'+room+' .log');
 			msgwrap = $('#room-'+room+' .msgwrap');
 		}
@@ -189,13 +190,19 @@ $(function() {
 		var currentRoom = $('#room-'+id);
 
 		if(currentRoom.length == 0) {
-			currentRoom = $('<div></div>');
-			currentRoom.attr('id', 'room-'+id).addClass('room current');
-			currentRoom.html('<h3>'+$('#user-'+id+' span').html()+'</h3>' +
-			                 '<div class="log"><div class="msgwrap"></div></div>');
-			$('#roomwrap').append(currentRoom);
+			createRoom(id);
 		} else {
 			currentRoom.show().addClass('current');
 		}
+	}
+
+	function createRoom(id) {
+		var room = $('<div></div>');
+		room.attr('id', 'room-'+id).addClass('room current');
+		room.html('<h3>'+$('#user-'+id+' span').html()+'</h3>' +
+		                 '<div class="log"><div class="msgwrap"></div></div>');
+		$('#roomwrap').append(room);
+
+		return room;
 	}
 });
