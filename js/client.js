@@ -184,7 +184,7 @@ $(function() {
 		if(currentRoom.length == 0) {
 			currentRoom = $('<div></div>');
 			currentRoom.attr('id', 'room-'+id).addClass('room current');
-			currentRoom.html('<h3>'+$('user-'+id+' span').html()+'</h3>' +
+			currentRoom.html('<h3>'+$('#user-'+id+' span').html()+'</h3>' +
 			                 '<div class="log"><div class="msgwrap"></div></div>');
 			$('#roomwrap').append(currentRoom);
 		} else {
