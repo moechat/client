@@ -171,6 +171,7 @@ $(function() {
 
 	function switchRoom(id) {
 		if(id == roomID) return;
+		roomID = id;
 
 		$('#userbox .selected').removeClass('selected');
 		if(id) $('#user-'+id).addClass('selected');
