@@ -107,10 +107,10 @@ $(function() {
 						break;
 					case "idset":
 						userID = json.args.id;
+						break;
 					default: break;
 					}
 				} else if (json.notif) {
-					console.log(json.notif);
 					d.html("<i>" + html_sanitize(json.notif) + "</i>");
 					appendLog(d, -1);
 				} else if (json.msg) {
@@ -188,19 +188,18 @@ $(function() {
 		conn.send('t'+id);
 		$('.room.current').hide().removeClass('current');
 		var currentRoom = $('#room-'+id);
+		if(currentRoom.length == 0)
+			currentRoom = createRoom(id);
 
-		if(currentRoom.length == 0) {
-			createRoom(id);
-		} else {
-			currentRoom.show().addClass('current');
-		}
+		currentRoom.show().addClass('current');
 	}
 
 	function createRoom(id) {
 		var room = $('<div></div>');
-		room.attr('id', 'room-'+id).addClass('room current');
+		room.attr('id', 'room-'+id).addClass('room');
 		room.html('<h3>'+$('#user-'+id+' span').html()+'</h3>' +
 		                 '<div class="log"><div class="msgwrap"></div></div>');
+		room.hide();
 		$('#roomwrap').append(room);
 
 		return room;
