@@ -6,13 +6,19 @@ var version = '0.10';
 $(function() {
 	var xhr, conn, username, userID;
 	var msg = $('#msg');
-	var log = $('.log');
 	var userbox = $('#userbox');
-	var msgwrap = $('.msgwrap');
 
 	queryUsers();
 
-	function appendLog(msg) {
+	function appendLog(msg, room) {
+		if(room == -1) {
+			var log = $('.log');
+			var msgwrap = $('.msgwrap');
+		} else {
+			var log = $('#room-'+room+' .log');
+			var msgwrap = $('#room-'+room+' .msgwrap');
+		}
+
 		var doScroll = true;
 		msgwrap.append(msg);
 		if (doScroll) {
@@ -62,7 +68,7 @@ $(function() {
 		};
 
 		conn.onclose = function(evt) {
-			appendLog($("<div><b>Connection closed.</b></div>"));
+			appendLog($("<div><b>Connection closed.</b></div>"), -1);
 			$('#form').submit(null);
 			$('#submitBtn').text('Reconnect').click(function() {window.location.reload();});
 			$('#msg,#username,#email').prop('disabled', true);
@@ -105,20 +111,21 @@ $(function() {
 				} else if (json.notif) {
 					console.log(json.notif);
 					d.html("<i>" + html_sanitize(json.notif) + "</i>");
+					appendLog(d, -1);
 				} else if (json.msg) {
-					if (json["user"] == username) {
-						d.html(html_sanitize(parseBBCode("me: " + json["msg"])));
+					if (json.user == username) {
+						d.html(html_sanitize(parseBBCode("me: " + json.msg)));
 					} else {
-						d.html(html_sanitize(parseBBCode(json["user"]+": "+json["msg"])));
+						d.html(html_sanitize(parseBBCode(json.user+": "+json.msg)));
 					}
+					appendLog(d, json.target);
 				}
-				appendLog(d);
 			} catch (e) {
-				appendLog($('<div class="error"><div/>').text('Error '+e+' while parsing message: '+evt.data));
+				appendLog($('<div class="error"><div/>').text('Error '+e+' while parsing message: '+evt.data), -1);
 			}
 		};
 	} else {
-		appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"));
+		appendLog($("<div><b>Your browser does not support WebSockets.</b></div>"), -1);
 	}
 
 	function queryUsers() {
@@ -186,8 +193,6 @@ $(function() {
 			currentRoom.attr('id', 'room-'+id).addClass('room current');
 			currentRoom.html('<h3>'+$('#user-'+id+' span').html()+'</h3>' +
 			                 '<div class="log"><div class="msgwrap"></div></div>');
-			log = currentRoom.children('.log');
-			msgwrap = currentRoom.children('.msgwrap');
 			$('#roomwrap').append(currentRoom);
 		} else {
 			currentRoom.show().addClass('current');
