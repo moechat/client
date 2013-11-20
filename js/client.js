@@ -1,6 +1,6 @@
 var $, localStorage, html_sanitize, parseBBCode;
 
-var version = '0.10';
+var version = '0.11';
 $(function() {
 	var xhr, conn, username, userID;
 	var roomID = 0;
@@ -9,14 +9,18 @@ $(function() {
 
 	queryUsers();
 
-	function appendLog(msg, room) {
+	function appendLog(msg, rooms) {
 		var log, msgwrap;
-		if(room == -1) {
+		if(rooms) {
+			log = new Array();
+			msgwrap = new Array();
+			rooms.forEach(function(room) {
+				log = log.concat($('#room-'+room+' .log'));
+				msgwrap = msgwrap.concat($('#room-'+room+' .msgwrap'));
+			});
+		} else {
 			log = $('.log');
 			msgwrap = $('.msgwrap');
-		} else {
-			log = $('#room-'+room+' .log');
-			msgwrap = $('#room-'+room+' .msgwrap');
 		}
 
 		var doScroll = true;
@@ -118,7 +122,8 @@ $(function() {
 					} else {
 						d.html(html_sanitize(parseBBCode(json.user+": "+json.msg)));
 					}
-					if($('#room-'+json.target).length == 0) createRoom(json.target);
+					if(json.target)
+						if($('#room-'+json.target).length == 0) createRoom(json.target);
 					appendLog(d, json.target);
 				}
 			} catch (e) {
