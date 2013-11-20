@@ -11,12 +11,13 @@ $(function() {
 	queryUsers();
 
 	function appendLog(msg, room) {
+		var log, msgwrap;
 		if(room == -1) {
-			var log = $('.log');
-			var msgwrap = $('.msgwrap');
+			log = $('.log');
+			msgwrap = $('.msgwrap');
 		} else {
-			var log = $('#room-'+room+' .log');
-			var msgwrap = $('#room-'+room+' .msgwrap');
+			log = $('#room-'+room+' .log');
+			msgwrap = $('#room-'+room+' .msgwrap');
 		}
 
 		var doScroll = true;
