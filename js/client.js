@@ -115,18 +115,18 @@ $(function() {
 					}
 				} else if (json.notif) {
 					d.html("<i>" + html_sanitize(json.notif) + "</i>");
-					appendLog(d, json.target);
+					appendLog(d, json.targets);
 				} else if (json.msg) {
 					if (json.user == username) {
 						d.html(html_sanitize(parseBBCode("me: " + json.msg)));
 					} else {
 						d.html(html_sanitize(parseBBCode(json.user+": "+json.msg)));
 					}
-					if(json.target) json.target.forEach(function(room) {
+					if(json.targets) json.targets.forEach(function(room) {
 						if($('#room-'+room).length == 0) createRoom(room);
 					});
 
-					appendLog(d, json.target);
+					appendLog(d, json.targets);
 				}
 			} catch (e) {
 				appendLog($('<div class="error"><div/>').text('Error '+e+' while parsing message: '+evt.data), -1);
