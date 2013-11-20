@@ -15,7 +15,6 @@ $(function() {
 			log = $('.log');
 			msgwrap = $('.msgwrap');
 		} else {
-			if($('#room-'+room).length == 0) createRoom(room);
 			log = $('#room-'+room+' .log');
 			msgwrap = $('#room-'+room+' .msgwrap');
 		}
@@ -119,6 +118,7 @@ $(function() {
 					} else {
 						d.html(html_sanitize(parseBBCode(json.user+": "+json.msg)));
 					}
+					if($('#room-'+json.target).length == 0) createRoom(json.target);
 					appendLog(d, json.target);
 				}
 			} catch (e) {
