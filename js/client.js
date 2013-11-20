@@ -122,8 +122,10 @@ $(function() {
 					} else {
 						d.html(html_sanitize(parseBBCode(json.user+": "+json.msg)));
 					}
-					if(json.target)
-						if($('#room-'+json.target).length == 0) createRoom(json.target);
+					if(json.target) json.target.forEach(function(room) {
+						if($('#room-'+room).length == 0) createRoom(room);
+					});
+
 					appendLog(d, json.target);
 				}
 			} catch (e) {
