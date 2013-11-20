@@ -1,6 +1,6 @@
 var $, localStorage, html_sanitize, parseBBCode;
 
-var version = 0.8;
+var version = '0.0.9';
 $(function() {
 	var xhr, conn, username;
 	var msg = $("#msg");
@@ -76,16 +76,16 @@ $(function() {
 				} else if (json.cmd) {
 					switch (json.cmd) {
 					case "userjoin":
-						appendUser(json.args.name, json.args.email);
+						appendUser(json.args.name, json.args.email, json.args.id);
 						break;
 					case "userleave":
-						removeUser(json.args.name);
+						removeUser(json.args.id);
 						break;
 					case "namechange":
-						changeName(json.args.currname, json.args.newname);
+						changeName(json.args.id, json.args.newname);
 						break;
 					case "emailchange":
-						changeEmail(json.args.name, json.args.email);
+						changeEmail(json.args.id, json.args.email);
 						break;
 					case "fnamechange":
 						username = json.args.newname;
@@ -124,7 +124,7 @@ $(function() {
 						return a.username.charCodeAt(0) - b.username.charCodeAt(0);
 					});
 					users.forEach(function (user) {
-						appendUser(user.username, user.email);
+						appendUser(user.username, user.email, user.id);
 					});
 				}
 			}
@@ -132,30 +132,30 @@ $(function() {
 		xhr.send(null);
 	}
 
-	function appendUser(username, email) {
-		if($('#user-'+username).length != 0) return;
+	function appendUser(username, email, id) {
+		if($('#user-'+id).length != 0) return;
 		var e = $('<div></div>');
 		var md5 = $.md5(email.toLowerCase().trim());
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
-		e.html('<div id="user-'+username+'" class="user"><img src="'+imgurl+'"><span><br/ >'+username+'</span></div>');
+		e.html('<div id="user-'+id+'" class="user"><img src="'+imgurl+'"><span><br/ >'+username+'</span></div>');
 		userbox.append(e);
 	}
 
-	function removeUser(username) {
-		$('#user-'+username).remove();
+	function removeUser(id) {
+		$('#user-'+id).remove();
 	}
 
-	function changeName(oldname, newname) {
-		$('#user-'+oldname).attr('id', 'user-'+newname).children('span').text(newname);
+	function changeName(id, newname) {
+		$('#user-'+id).children('span').text(newname);
 	}
 
-	function changeEmail(name, newemail) {
-		if($('#user-'+username).length == 0) return;
+	function changeEmail(id, newemail) {
+		if($('#user-'+id).length == 0) return;
 
 		var md5 = $.md5(newemail.toLowerCase().trim());
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
-		$('#user-'+username+' img').attr('src', imgurl);
+		$('#user-'+id+' img').attr('src', imgurl);
 	}
 });
