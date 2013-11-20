@@ -1,10 +1,9 @@
 var $, localStorage, html_sanitize, parseBBCode;
 
-var currentRoom = $('#room-0');
-var roomID = 0;
 var version = '0.10';
 $(function() {
 	var xhr, conn, username, userID;
+	var roomID = 0;
 	var msg = $('#msg');
 	var userbox = $('#userbox');
 
