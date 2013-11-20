@@ -98,9 +98,9 @@ $(function() {
 					d.html("<i>" + html_sanitize(json.notif) + "</i>");
 				} else if (json.msg) {
 					if (json["user"] == username) {
-						d.html(parseBBCode("me: " + html_sanitize(json["msg"])));
+						d.html(html_sanitize(parseBBCode("me: " + json["msg"])));
 					} else {
-						d.html(parseBBCode(json["user"]+": "+html_sanitize(json["msg"])));
+						d.html(html_sanitize(parseBBCode(json["user"]+": "+json["msg"])));
 					}
 				}
 				appendLog(d);
