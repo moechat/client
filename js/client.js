@@ -1,6 +1,6 @@
 var $, localStorage, html_sanitize, parseBBCode;
 
-var version = '0.11';
+var version = '0.12';
 $(function() {
 	var xhr, conn, username, userID;
 	var roomID = 0;
@@ -82,6 +82,7 @@ $(function() {
 		conn.onmessage = function(evt) {
 			console.log(evt);
 			try {
+				if(evt.data == 'p') conn.send('p');
 				var json = JSON.parse(evt.data);
 				var d = $('<div></div>');
 				if (json.error) {
