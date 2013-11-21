@@ -82,7 +82,11 @@ $(function() {
 		conn.onmessage = function(evt) {
 			console.log(evt);
 			try {
-				if(evt.data == 'p') conn.send('p');
+				if(evt.data == 'p') {
+					conn.send('p');
+					return;
+				}
+
 				var json = JSON.parse(evt.data);
 				var d = $('<div></div>');
 				if (json.error) {
