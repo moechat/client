@@ -44,7 +44,10 @@ $(function() {
 	});
 
 	msg.keydown(function (e) {
-		if (e.ctrlKey && e.keyCode == 13) $('#form').submit();
+		if (!e.shiftKey && e.keyCode == 13) {
+			e.preventDefault();
+			$('#form').submit();
+		}
 	});
 
 	$('#roombtn-0').click(function() { switchRoom(0); });
