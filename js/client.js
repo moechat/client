@@ -1,6 +1,6 @@
 var $, localStorage, html_sanitize, parseBBCode, Audio, WebSocket;
 
-var version = '0.12';
+var version = '0.13';
 $(function() {
 	var xhr, conn;
 	var roomID = 0;
