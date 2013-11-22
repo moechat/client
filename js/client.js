@@ -6,7 +6,7 @@ $(function() {
 	var roomID = 0;
 	var users = Array();
 	var msg = $('#msg');
-//	var msgDing = Audio('');
+	var msgDing = new Audio('/sounds/CRcv.mp3');
 	var userbox = $('#userbox');
 
 	queryUsers();
@@ -135,6 +135,7 @@ $(function() {
 						msg.addClass('chat panel');
 						d.append(msg);
 					} else {
+						msgDing.play();
 						d.addClass('chat panel');
 						d.html(parseBBCode(json.user+": "+html_sanitize(json.msg)));
 					}
