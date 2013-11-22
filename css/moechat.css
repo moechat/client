@@ -6,6 +6,10 @@ body {
   background: gray;
 }
 
+#settings-btn {
+	margin-top: 1.2em;
+}
+
 #content {
 	height: 80%;
 	min-height: 650px;
@@ -25,7 +29,7 @@ body {
   padding: 0 0.5em;
   overflow-y: auto;
 	overflow-x: hidden;
-	height: 400px;
+	height: 500px;
 }
 
 .chat.panel {
