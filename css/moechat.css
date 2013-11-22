@@ -32,12 +32,20 @@ body {
 	height: 500px;
 }
 
-.msg * {
+.msg > * {
 	float: right;
+	clear: both;
 }
 
-.me.msg * {
+.me.msg > * {
 	float: left;
+	clear: both;
+}
+
+.error,
+.notif {
+	float: left;
+	width: 100%;
 }
 
 .chat.panel {
@@ -49,17 +57,19 @@ body {
   word-wrap: break-word;
 	padding: 0.5em;
 	margin-bottom: 0.25em;
+	margin-right: 1em;
 	margin-left: 5em;
 }
 
 .me .chat.panel {
-	margin-left: 0;
+	margin-left: 1em;
 	margin-right: 5em;
 }
 
 .chat.notif.panel,
 .chat.error.panel {
 	margin-left: 0;
+	margin-right: 0;
 }
 
 .chat.error.panel {

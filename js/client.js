@@ -157,8 +157,8 @@ $(function() {
 					} else {
 						msgRcvSnd.play();
 						d.addClass('msg');
-						d.append($('<img>').attr('src', user[json.user].img));
-						d.append($('<div class="name">').text(user[json.user].name));
+						d.append($('<img>').attr('src', users[json.user].img));
+						d.append($('<div class="name">').text(users[json.user].name));
 						var msg = $('<div>');
 						msg.html(parseBBCode(html_sanitize(json.msg)));
 						msg.addClass('chat panel');
