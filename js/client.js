@@ -6,6 +6,7 @@ $(function() {
 	var roomID = 0;
 	var users = Array();
 	var msg = $('#msg');
+//	var msgDing = Audio('');
 	var userbox = $('#userbox');
 
 	queryUsers();
@@ -83,13 +84,13 @@ $(function() {
 		};
 
 		conn.onmessage = function(evt) {
-			console.log(evt);
 			try {
 				if(evt.data == 'p') {
 					conn.send('p');
 					return;
 				}
 
+				console.log(evt);
 				var json = JSON.parse(evt.data);
 				var d = $('<div></div>');
 				if (json.error) {
