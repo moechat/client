@@ -6,13 +6,14 @@ $(function() {
 	var roomID = 0;
 	var user = {};
 	var users = Array();
-	var msg = $('#msg');
+	var msgbox = $('#msg');
 	var msgRcvSnd = new Audio('/sounds/CRcv.mp3');
 	var msgSendSnd = new Audio('/sounds/CSnd.mp3');
 	var errorSnd = new Audio('/sounds/Error.mp3');
 	var joinSnd = new Audio('/sounds/On.mp3');
 	var leaveSnd = new Audio('/sounds/Off.mp3');
 	var userbox = $('#userbox');
+	var lastUid = -1;
 
 	queryUsers();
 
@@ -31,6 +32,35 @@ $(function() {
 			msgwrap.append(msg);
 			log.scrollTop(msgwrap.height() - log.height());
 		}
+		lastUid = -1;
+	}
+
+	function appendMsg(uid, msg, room) {
+		var log = $('#room-'+room+' .log');
+		var msgwrap = $('#room-'+room+' .msgwrap');
+
+		if (uid == lastUid) {
+			msgwrap.children(':last').append(msg);
+		} else {
+			var d = $('<div>').addClass('msg');
+
+			if (uid == user.ID) {
+				d.addClass('me');
+				d.append($('<img>').attr('src', user.img));
+				d.append($('<div class="name">').text(user.name));
+				d.append(msg);
+			} else {
+				msgRcvSnd.play();
+				d.append($('<img>').attr('src', users[uid].img));
+				d.append($('<div class="name">').text(users[uid].name));
+				d.append(msg);
+			}
+
+			msgwrap.append(d);
+		}
+
+		lastUid = uid;
+		log.scrollTop(msgwrap.height() - log.height());
 	}
 
 	$('#username').focusout(function() {
@@ -51,7 +81,7 @@ $(function() {
 		}
 	});
 
-	msg.keydown(function (e) {
+	msgbox.keydown(function (e) {
 		if (!e.shiftKey && e.keyCode == 13) {
 			e.preventDefault();
 			$('#form').submit();
@@ -81,10 +111,10 @@ $(function() {
 				//msgSendSnd.play();
 				evt.preventDefault();
 				if (!conn) return;
-				if (!msg.val()) return;
+				if (!msgbox.val()) return;
 
-				conn.send('m' + msg.val());
-				msg.val('');
+				conn.send('m' + msgbox.val());
+				msgbox.val('');
 			});
 		};
 
@@ -109,11 +139,11 @@ $(function() {
 
 				console.log(evt);
 				var json = JSON.parse(evt.data);
-				var d = $('<div></div>');
+				var d = $('<div></div>').addClass('chat panel');
 				if (json.error) {
 					errorSnd.play();
-					d.innerHTML("<b>" + json.msg + "</b>");
-					d.className('error');
+					d.addClass('error');
+					d.html("<b>" + json.msg + "</b>");
 				} else if (json.cmd) {
 					switch (json.cmd) {
 					case "userjoin":
@@ -142,33 +172,16 @@ $(function() {
 					default: break;
 					}
 				} else if (json.notif) {
-					d.addClass('chat notif panel');
+					d.addClass('notif');
 					d.html("<i>" + html_sanitize(json.notif) + "</i>");
 					appendLog(d, json.targets);
 				} else if (json.msg) {
-					if (json.user == user.ID) {
-						d.addClass('me msg');
-						d.append($('<img>').attr('src', user.img));
-						d.append($('<div class="name">').text(user.name));
-						var msg = $('<div>');
-						msg.html(parseBBCode(html_sanitize(json.msg)));
-						msg.addClass('chat panel');
-						d.append(msg);
-					} else {
-						msgRcvSnd.play();
-						d.addClass('msg');
-						d.append($('<img>').attr('src', users[json.user].img));
-						d.append($('<div class="name">').text(users[json.user].name));
-						var msg = $('<div>');
-						msg.html(parseBBCode(html_sanitize(json.msg)));
-						msg.addClass('chat panel');
-						d.append(msg);
-					}
+					d.html(parseBBCode(html_sanitize(json.msg)));
 					if(json.targets) json.targets.forEach(function(room) {
 						if($('#room-'+room).length == 0) createRoom(room);
 					});
 
-					appendLog(d, json.targets);
+					appendMsg(json.user, d, json.targets[0]);
 				}
 			} catch (e) {
 				errorSnd.play();

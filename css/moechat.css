@@ -32,6 +32,20 @@ body {
 	height: 500px;
 }
 
+.msgwrap:before,
+.msgwrap:after {
+	content: " ";
+	display: table;
+}
+
+.msgwrap:after {
+	clear: both;
+}
+
+.msgwrap {
+	*zoom: 1;
+}
+
 .msg > * {
 	float: right;
 	clear: both;
