@@ -1,9 +1,10 @@
-var $, localStorage, html_sanitize, parseBBCode;
+var $, localStorage, html_sanitize, parseBBCode, Audio, WebSocket;
 
 var version = '0.12';
 $(function() {
-	var xhr, conn, username, userID;
+	var xhr, conn;
 	var roomID = 0;
+	var user = {};
 	var users = Array();
 	var msg = $('#msg');
 	var msgRcvSnd = new Audio('/sounds/CRcv.mp3');
@@ -33,18 +34,20 @@ $(function() {
 	}
 
 	$('#username').focusout(function() {
-		console.log($('#username').val());
-		localStorage.username = $('#username').val();
-		if($('#username').val()) {
-			conn.send("u" + $('#username').val());
-			username = $('#username').val();
+		if($('#username').val().trim()) {
+			user.name = $('#username').val().trim();
+			localStorage.username = user.name;
+			conn.send("u" + user.name);
 		}
 	});
 	$('#email').focusout(function() {
-		localStorage.email = $('#email').val();
-		console.log($("#email").val());
-		if($('#email').val()) {
-			conn.send("e" + $('#email').val());
+		if($('#email').val().trim()) {
+			user.email = $('#email').val().toLowerCase().trim();
+			var md5 = $.md5(user.email.toLowerCase().trim());
+			var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
+			user.img = imgurl;
+			localStorage.email = user.email;
+			conn.send("e" + user.email);
 		}
 	});
 
@@ -63,13 +66,16 @@ $(function() {
 			joinSnd.play();
 			conn.send("v" + version);
 
-			var email = localStorage.email ? localStorage.email : '';
-			$('#email').val(email);
-			if(email) conn.send("e" + email);
+			user.email = localStorage.email ? localStorage.email : '';
+			var md5 = $.md5(user.email.toLowerCase().trim());
+			var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
+			user.img = imgurl;
+			$('#email').val(user.email);
+			if(user.email) conn.send("e" + user.email);
 
-			username = localStorage.username ? localStorage.username : "anon" + Math.floor(Math.random() * 1000000);
-			$('#username').val(username);
-			conn.send("u" + username);
+			user.name = localStorage.username ? localStorage.username : "anon";
+			$('#username').val(user.name);
+			conn.send("u" + user.name);
 
 			$("#form").submit(function(evt) {
 				//msgSendSnd.play();
@@ -111,27 +117,27 @@ $(function() {
 				} else if (json.cmd) {
 					switch (json.cmd) {
 					case "userjoin":
-						if(json.args.id != userID)
+						if(json.args.id != user.ID)
 							appendUser(json.args.name, json.args.email, json.args.id);
 						break;
 					case "userleave":
-						if(json.args.id != userID)
+						if(json.args.id != user.ID)
 							removeUser(json.args.id);
 						break;
 					case "namechange":
-						if(json.args.id != userID)
+						if(json.args.id != user.ID)
 							changeName(json.args.id, json.args.newname);
 						break;
 					case "emailchange":
-						if(json.args.id != userID)
+						if(json.args.id != user.ID)
 							changeEmail(json.args.id, json.args.email);
 						break;
 					case "fnamechange":
-						username = json.args.newname;
-						$('#username').val(username);
+						user.name = json.args.newname;
+						$('#username').val(user.name);
 						break;
 					case "idset":
-						userID = json.args.id;
+						user.ID = json.args.id;
 						break;
 					default: break;
 					}
@@ -140,16 +146,23 @@ $(function() {
 					d.html("<i>" + html_sanitize(json.notif) + "</i>");
 					appendLog(d, json.targets);
 				} else if (json.msg) {
-					if (json.user == username) {
-						d.addClass('me');
+					if (json.user == user.ID) {
+						d.addClass('me msg');
+						d.append($('<img>').attr('src', user.img));
+						d.append($('<div class="name">').text(user.name));
 						var msg = $('<div>');
 						msg.html(parseBBCode(html_sanitize(json.msg)));
 						msg.addClass('chat panel');
 						d.append(msg);
 					} else {
 						msgRcvSnd.play();
-						d.addClass('chat panel');
-						d.html(parseBBCode(json.user+": "+html_sanitize(json.msg)));
+						d.addClass('msg');
+						d.append($('<img>').attr('src', user[json.user].img));
+						d.append($('<div class="name">').text(user[json.user].name));
+						var msg = $('<div>');
+						msg.html(parseBBCode(html_sanitize(json.msg)));
+						msg.addClass('chat panel');
+						d.append(msg);
 					}
 					if(json.targets) json.targets.forEach(function(room) {
 						if($('#room-'+room).length == 0) createRoom(room);

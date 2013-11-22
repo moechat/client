@@ -32,6 +32,14 @@ body {
 	height: 500px;
 }
 
+.msg * {
+	float: right;
+}
+
+.me.msg * {
+	float: left;
+}
+
 .chat.panel {
 	background-color: white;
   white-space: pre-wrap;
