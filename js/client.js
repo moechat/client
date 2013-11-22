@@ -56,6 +56,8 @@ $(function() {
 	if (window["WebSocket"]) {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		conn.onopen = function() {
+			conn.send("v" + version);
+
 			var email = localStorage.email ? localStorage.email : '';
 			$('#email').val(email);
 			if(email) conn.send("e" + email);
@@ -63,8 +65,6 @@ $(function() {
 			username = localStorage.username ? localStorage.username : "anon" + Math.floor(Math.random() * 1000000);
 			$('#username').val(username);
 			conn.send("u" + username);
-
-			conn.send("v" + version);
 
 			$("#form").submit(function(evt) {
 				evt.preventDefault();
