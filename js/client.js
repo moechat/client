@@ -6,7 +6,11 @@ $(function() {
 	var roomID = 0;
 	var users = Array();
 	var msg = $('#msg');
-	var msgDing = new Audio('/sounds/CRcv.mp3');
+	var msgRcvSnd = new Audio('/sounds/CRcv.mp3');
+	var msgSendSnd = new Audio('/sounds/CSnd.mp3');
+	var errorSnd = new Audio('/sounds/Error.mp3');
+	var joinSnd = new Audio('/sounds/On.mp3');
+	var leaveSnd = new Audio('/sounds/Off.mp3');
 	var userbox = $('#userbox');
 
 	queryUsers();
@@ -56,6 +60,7 @@ $(function() {
 	if (window["WebSocket"]) {
 		conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		conn.onopen = function() {
+			joinSnd.play();
 			conn.send("v" + version);
 
 			var email = localStorage.email ? localStorage.email : '';
@@ -67,6 +72,7 @@ $(function() {
 			conn.send("u" + username);
 
 			$("#form").submit(function(evt) {
+				//msgSendSnd.play();
 				evt.preventDefault();
 				if (!conn) return;
 				if (!msg.val()) return;
@@ -75,6 +81,11 @@ $(function() {
 				msg.val('');
 			});
 		};
+
+		$(window).unload(function() {
+			leaveSnd.play();
+			conn.close();
+		});
 
 		conn.onclose = function(evt) {
 			appendLog($("<div><b>Connection closed.</b></div>"));
@@ -94,6 +105,7 @@ $(function() {
 				var json = JSON.parse(evt.data);
 				var d = $('<div></div>');
 				if (json.error) {
+					errorSnd.play();
 					d.innerHTML("<b>" + json.msg + "</b>");
 					d.className('error');
 				} else if (json.cmd) {
@@ -135,7 +147,7 @@ $(function() {
 						msg.addClass('chat panel');
 						d.append(msg);
 					} else {
-						msgDing.play();
+						msgRcvSnd.play();
 						d.addClass('chat panel');
 						d.html(parseBBCode(json.user+": "+html_sanitize(json.msg)));
 					}
@@ -146,6 +158,7 @@ $(function() {
 					appendLog(d, json.targets);
 				}
 			} catch (e) {
+				errorSnd.play();
 				appendLog($('<div class="chat error panel"><div/>').text('Error "'+e+'" while parsing message: '+evt.data));
 			}
 		};
