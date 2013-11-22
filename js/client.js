@@ -64,16 +64,21 @@ $(function() {
 	}
 
 	$('#username').focusout(function() {
-		if($('#username').val().trim()) {
-			user.name = $('#username').val().trim();
+		var newname = $('#username').val().trim();
+		$('#username').val(newname);
+		if(newname && newname != user.name) {
+			user.name = newname;
 			localStorage.username = user.name;
 			conn.send("u" + user.name);
 		}
 	});
 	$('#email').focusout(function() {
-		if($('#email').val().trim()) {
-			user.email = $('#email').val().toLowerCase().trim();
-			var md5 = $.md5(user.email.toLowerCase().trim());
+		var newemail = $('#email').val().trim();
+		$('#email').val(newemail);
+		newemail = newemail.toLowerCase();
+		if(newemail && newemail != user.email) {
+			user.email = newemail;
+			var md5 = $.md5(user.email);
 			var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 			user.img = imgurl;
 			localStorage.email = user.email;
@@ -143,7 +148,7 @@ $(function() {
 				if (json.error) {
 					errorSnd.play();
 					d.addClass('error');
-					d.html("<b>" + json.msg + "</b>");
+					d.append($('<b>').text(json.msg));
 				} else if (json.cmd) {
 					switch (json.cmd) {
 					case "userjoin":
@@ -173,7 +178,7 @@ $(function() {
 					}
 				} else if (json.notif) {
 					d.addClass('notif');
-					d.html("<i>" + html_sanitize(json.notif) + "</i>");
+					d.append($('<i>').text(json.notif));
 					appendLog(d, json.targets);
 				} else if (json.msg) {
 					d.html(parseBBCode(html_sanitize(json.msg)));
@@ -213,7 +218,8 @@ $(function() {
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
 		e.attr('id', 'user-'+id).addClass('userbtn').data('id', id);
-		e.html('<img src="'+imgurl+'"><span class="name">'+username+'</span>');
+		e.html('<img src="'+imgurl+'">');
+		e.append($('<span class="name">').text(username));
 		e.click(function(evt) { switchRoom(id); });
 		userbox.append(e);
 
@@ -267,8 +273,8 @@ $(function() {
 	function createRoom(id) {
 		var room = $('<div></div>');
 		room.attr('id', 'room-'+id).addClass('room');
-		room.html('<h3>'+users[id].name+'</h3>' +
-		          '<div class="log"><div class="msgwrap"></div></div>');
+		room.append($('<h3>').text(users[id].name));
+		room.append($('<div class="log"><div class="msgwrap">'));
 		room.hide();
 		$('#roomwrap').append(room);
 
