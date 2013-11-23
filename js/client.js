@@ -13,7 +13,8 @@ $(function() {
 	var joinSnd = new Audio('/sounds/On.mp3');
 	var leaveSnd = new Audio('/sounds/Off.mp3');
 	var userbox = $('#userbox');
-	var lastUid = -1;
+	var lastUid = Array();
+	lastUid[0] = -1;
 
 	queryUsers();
 
@@ -25,21 +26,23 @@ $(function() {
 				msgwrap = $('#room-'+room+' .msgwrap');
 				msgwrap.append(msg);
 				log.scrollTop(msgwrap.height() - log.height());
+				lastUid[room] = -1;
 			});
 		} else {
 			log = $('.log');
 			msgwrap = $('.msgwrap');
 			msgwrap.append(msg);
 			log.scrollTop(msgwrap.height() - log.height());
+			lastUid[-1] = -1;
 		}
-		lastUid = -1;
 	}
 
 	function appendMsg(uid, msg, room) {
 		var log = $('#room-'+room+' .log');
 		var msgwrap = $('#room-'+room+' .msgwrap');
 
-		if (uid == lastUid) {
+		console.log(room);
+		if (uid == lastUid[room] && lastUid[-1] == 0) {
 			msgwrap.children(':last').append(msg);
 		} else {
 			var d = $('<div>').addClass('msg');
@@ -59,7 +62,8 @@ $(function() {
 			msgwrap.append(d);
 		}
 
-		lastUid = uid;
+		lastUid[room] = uid;
+		lastUid[-1] = 0;
 		log.scrollTop(msgwrap.height() - log.height());
 	}
 
