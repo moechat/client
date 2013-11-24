@@ -8,7 +8,6 @@ $(function() {
 	var users = Array();
 	var msgbox = $('#msg');
 	var msgRcvSnd = new Audio('/sounds/CRcv.mp3');
-	var msgSendSnd = new Audio('/sounds/CSnd.mp3');
 	var errorSnd = new Audio('/sounds/Error.mp3');
 	var joinSnd = new Audio('/sounds/On.mp3');
 	var leaveSnd = new Audio('/sounds/Off.mp3');
