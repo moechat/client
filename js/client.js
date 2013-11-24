@@ -117,12 +117,15 @@ $(function() {
 			conn.send("u" + user.name);
 
 			$("#form").submit(function(evt) {
-				//msgSendSnd.play();
 				evt.preventDefault();
 				if (!conn) return;
-				if (!msgbox.val()) return;
+				var m = msgbox.val();
+				if (!m) return;
 
-				conn.send('m' + msgbox.val());
+				if(m.indexOf("/") == 0)
+					conn.send('c' + m.substring(1));
+				else
+					conn.send('m' + m);
 				msgbox.val('');
 			});
 		};
