@@ -32,31 +32,6 @@ body {
 	height: 500px;
 }
 
-.msgwrap:before,
-.msgwrap:after {
-	content: " ";
-	display: table;
-}
-
-.msgwrap:after {
-	clear: both;
-}
-
-.msgwrap {
-	*zoom: 1;
-}
-
-.msg > * {
-	float: left;
-	clear: both;
-}
-
-.error,
-.notif {
-	float: left;
-	width: 100%;
-}
-
 .chat.panel {
 	background-color: white;
   white-space: pre-wrap;
@@ -66,14 +41,27 @@ body {
   word-wrap: break-word;
 	padding: 0.5em;
 	margin-bottom: 0.25em;
-	margin-left: 1em;
-	margin-right: 5em;
 }
 
-.chat.notif.panel,
-.chat.error.panel {
-	margin-left: 0;
-	margin-right: 0;
+.chat.panel hr {
+	margin: 0.5em 0;
+}
+
+.msg {
+	clear: both;
+}
+
+.msg img {
+	display: block;
+	float: left;
+	height: 40px;
+	width: 40px;
+	margin-right: 5px;
+}
+
+.msg-body {
+	padding-bottom: 0.25em;
+	overflow: hidden;
 }
 
 .chat.error.panel {
