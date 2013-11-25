@@ -129,9 +129,11 @@ $(function() {
 		});
 
 		conn.onclose = function(evt) {
-			appendLog($('<div class="chat panel error">Connection closed.</div>'));
+			appendLog($('<div class="chat panel error">Connection closed.'
+			            + ' <a class="retry-btn">Reconnect</a>?</div>'));
 			$('#form').submit(null);
 			$('#send-btn').text('Reconnect').click(function() {window.location.reload();});
+			$('.retry-btn').click(function() {window.location.reload();});
 			$('#msg,#username,#email').prop('disabled', true);
 		};
 
