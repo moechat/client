@@ -78,8 +78,7 @@ function isValidTag(str) {
 // m3 - the option of the [tag=option] expression
 // m4 - the end tag of the [/tag] expression
 //
-function textToHtmlCB(mstr, m1, m2, m3, m4, offset, string)
-{
+function textToHtmlCB(mstr, m1, m2, m3, m4, offset, string) {
    //
    // CR LF sequences
    //
