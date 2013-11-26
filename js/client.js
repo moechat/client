@@ -47,6 +47,7 @@ $(function() {
 				d.append($('<img>').attr('src', user.img));
 				u.text(user.name);
 			} else {
+				msgRcvSnd.pause();
 				msgRcvSnd.currentTime = 0;
 				msgRcvSnd.play();
 				d.append($('<img>').attr('src', users[uid].img));
