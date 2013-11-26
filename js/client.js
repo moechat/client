@@ -1,6 +1,6 @@
-var $, localStorage, html_sanitize, parseBBCode, Audio, WebSocket;
+var $, localStorage, Audio, WebSocket;
 
-var version = '0.13';
+var version = '0.0.14';
 $(function() {
 	var xhr, conn;
 	var roomID = 0;
@@ -37,7 +37,7 @@ $(function() {
 		if (uid == msgwrap.children(':last').data('uid')) {
 			var lmsg = msgwrap.find(':last-child .msg-body');
 			console.log(lmsg);
-			lmsg.html(lmsg.html() + '<hr>' + parseBBCode(html_sanitize(msg)));
+			lmsg.html(lmsg.html() + '<hr>' + msg);
 		} else {
 			var d = $('<div class="chat msg panel">').data('uid', uid);
 			var u = $('<h6 class="name">');
@@ -52,7 +52,7 @@ $(function() {
 				u.text(users[uid].name);
 			}
 
-			m.html(parseBBCode(html_sanitize(msg)));
+			m.html(msg);
 			m.prepend(u);
 			d.append(m);
 
