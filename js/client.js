@@ -14,6 +14,12 @@ $(function() {
 
 	queryUsers();
 
+	function playSnd(snd) {
+		snd.pause();
+		snd.currentTime = 0;
+		snd.play();
+	}
+
 	function appendLog(msg, rooms) {
 		var log, msgwrap;
 		if(rooms) {
@@ -35,6 +41,8 @@ $(function() {
 		var log = $('#room-'+room+' .log');
 		var msgwrap = $('#room-'+room+' .msgwrap');
 
+		if (uid != user.ID) playSnd(msgRcvSnd);
+
 		if (uid == msgwrap.children(':last').data('uid')) {
 			var lmsg = msgwrap.find(':last-child .msg-body');
 			lmsg.html(lmsg.html() + '<hr>' + msg);
@@ -47,9 +55,6 @@ $(function() {
 				d.append($('<img>').attr('src', user.img));
 				u.text(user.name);
 			} else {
-				msgRcvSnd.pause();
-				msgRcvSnd.currentTime = 0;
-				msgRcvSnd.play();
 				d.append($('<img>').attr('src', users[uid].img));
 				u.text(users[uid].name);
 			}
@@ -115,7 +120,7 @@ $(function() {
 				var d;
 				var json = JSON.parse(msg);
 				if (json.error) {
-					errorSnd.play();
+					playSnd(errorSnd);
 					d = $('<div></div>').addClass('chat error panel');
 					d.append($('<b>').text(json.msg));
 					appendLog(d, [-1]);
@@ -156,7 +161,7 @@ $(function() {
 					appendMsg(json.user, json.msg, json.target);
 				}
 			} catch (e) {
-				errorSnd.play();
+				playSnd(errorSnd);
 				appendLog($('<div class="chat error panel"><div/>').text('Error "'+e+'" while parsing message: '+msg));
 			}
 		});
