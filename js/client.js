@@ -1,11 +1,11 @@
 var $, localStorage, Audio, WebSocket, OTR, DSA;
 
-var version = '0.0.15';
+var version = '0.0.16';
 $(function() {
 	var xhr, conn, server;
 	var roomID = 0;
 	var user = {};
-	var users = Array();
+	var users = {};
 	var msgbox = $('#msg');
 	var msgRcvSnd = new Audio('/sounds/CRcv.mp3');
 	var errorSnd = new Audio('/sounds/Error.mp3');
@@ -150,11 +150,9 @@ $(function() {
 					d.append($('<i>').text(json.notif));
 					appendLog(d, json.targets);
 				} else if (json.msg) {
-					if(json.targets) json.targets.forEach(function(room) {
-						if($('#room-'+room).length == 0) createRoom(room);
-					});
+					if(json.target && $('#room-'+json.target).length == 0) createRoom(json.target);
 
-					appendMsg(json.user, json.msg, json.targets[0]);
+					appendMsg(json.user, json.msg, json.target);
 				}
 			} catch (e) {
 				errorSnd.play();
