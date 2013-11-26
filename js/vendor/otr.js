@@ -294,13 +294,13 @@
     return HLP.packData(BigInt.bigInt2bits(BigInt.trim(mpi, 0)))
   }
 
-  HLP.packSHORT = function (short) {
-    return HLP.packBytes(short, DTS.SHORT)
+  HLP.packSHORT = function (s) {
+    return HLP.packBytes(s, DTS.SHORT)
   }
 
-  HLP.unpackSHORT = function (short) {
-    short = HLP.toByteArray(short)
-    return HLP.unpack(short)
+  HLP.unpackSHORT = function (s) {
+    s = HLP.toByteArray(s)
+    return HLP.unpack(s)
   }
 
   HLP.packTLV = function (type, value) {
