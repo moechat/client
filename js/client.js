@@ -1,8 +1,8 @@
-var $, localStorage, Audio, WebSocket;
+var $, localStorage, Audio, WebSocket, OTR, DSA;
 
-var version = '0.0.14';
+var version = '0.0.15';
 $(function() {
-	var xhr, conn;
+	var xhr, conn, server;
 	var roomID = 0;
 	var user = {};
 	var users = Array();
@@ -10,7 +10,6 @@ $(function() {
 	var msgRcvSnd = new Audio('/sounds/CRcv.mp3');
 	var errorSnd = new Audio('/sounds/Error.mp3');
 	var userbox = $('#userbox');
-
 	queryUsers();
 
 	function appendLog(msg, rooms) {
@@ -36,7 +35,6 @@ $(function() {
 
 		if (uid == msgwrap.children(':last').data('uid')) {
 			var lmsg = msgwrap.find(':last-child .msg-body');
-			console.log(lmsg);
 			lmsg.html(lmsg.html() + '<hr>' + msg);
 		} else {
 			var d = $('<div class="chat msg panel">').data('uid', uid);
@@ -95,58 +93,26 @@ $(function() {
 	$('#roombtn-0').click(function() { switchRoom(0); });
 
 	if (window["WebSocket"]) {
-		conn = new WebSocket("ws://moechat.sauyon.com/chat");
-		conn.onopen = function() {
-			conn.send("v" + version);
+		var privkey = localStorage.privKey ? localStorage.privKey : new DSA();
 
-			user.email = localStorage.email ? localStorage.email : '';
-			var md5 = $.md5(user.email.toLowerCase().trim());
-			var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
-			user.img = imgurl;
-			$('#email').val(user.email);
-			if(user.email) conn.send("e" + user.email);
+		server = new OTR({priv: privkey});
+		server.ALLOW_V2 = false;
+		server.REQUIRE_ENCRYPTION = true;
 
-			user.name = localStorage.username ? localStorage.username : "anon";
-			$('#username').val(user.name);
-			conn.send("u" + user.name);
-
-			$("#form").submit(function(evt) {
-				evt.preventDefault();
-				if (!conn) return;
-				var m = msgbox.val();
-				if (!m) return;
-
-				if(m.indexOf("/") == 0)
-					conn.send('c' + m.substring(1));
-				else
-					conn.send('m' + m);
-				msgbox.val('');
-			});
-		};
-
-		$(window).unload(function() {
-			conn.close();
+		server.on('io', function(msg) {
+			conn.send(msg);
 		});
 
-		conn.onclose = function(evt) {
-			appendLog($('<div class="chat panel error">Connection closed.'
-			            + ' <a class="retry-btn">Reconnect</a>?</div>'));
-			$('#form').submit(null);
-			$('#send-btn').text('Reconnect').click(function() {window.location.reload();});
-			$('.retry-btn').click(function() {window.location.reload();});
-			$('#msg,#username,#email').prop('disabled', true);
-		};
-
-		conn.onmessage = function(evt) {
+		server.on('ui', function(msg) {
 			try {
-				if(evt.data == 'p') {
+				if(msg == 'p') {
 					conn.send('p');
 					return;
 				}
 
-				console.log(evt);
+				//console.log(msg);
 				var d;
-				var json = JSON.parse(evt.data);
+				var json = JSON.parse(msg);
 				if (json.error) {
 					errorSnd.play();
 					d = $('<div></div>').addClass('chat error panel');
@@ -191,8 +157,54 @@ $(function() {
 				}
 			} catch (e) {
 				errorSnd.play();
-				appendLog($('<div class="chat error panel"><div/>').text('Error "'+e+'" while parsing message: '+evt.data));
+				appendLog($('<div class="chat error panel"><div/>').text('Error "'+e+'" while parsing message: '+msg));
 			}
+		});
+
+		conn = new WebSocket("ws://moechat.sauyon.com/chat");
+		conn.onopen = function() {
+			server.sendMsg("v" + version);
+
+			user.email = localStorage.email ? localStorage.email : '';
+			var md5 = $.md5(user.email.toLowerCase().trim());
+			var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
+			user.img = imgurl;
+			$('#email').val(user.email);
+			if(user.email) server.sendMsg("e" + user.email);
+
+			user.name = localStorage.username ? localStorage.username : "anon";
+			$('#username').val(user.name);
+			server.sendMsg("u" + user.name);
+
+			$("#form").submit(function(evt) {
+				evt.preventDefault();
+				if (!conn) return;
+				var m = msgbox.val();
+				if (!m) return;
+
+				if(m.indexOf("/") == 0)
+					server.sendMsg('c' + m.substring(1));
+				else
+					server.sendMsg('m' + m);
+				msgbox.val('');
+			});
+		};
+
+		$(window).unload(function() {
+			conn.close();
+		});
+
+		conn.onclose = function(evt) {
+			appendLog($('<div class="chat panel error">Connection closed.'
+			            + ' <a class="retry-btn">Reconnect</a>?</div>'));
+			$('#form').submit(null);
+			$('#send-btn').text('Reconnect').click(function() {window.location.reload();});
+			$('.retry-btn').click(function() {window.location.reload();});
+			$('#msg,#username,#email').prop('disabled', true);
+		};
+
+		conn.onmessage = function(evt) {
+			server.receiveMsg(evt.data);
 		};
 	} else {
 		appendLog($('<div class="chat error panel"><b>Your browser does not support WebSockets.</b></div>'));
@@ -262,7 +274,7 @@ $(function() {
 		if(id) $('#user-'+id).addClass('active');
 		else $('#roombtn-0').addClass('active');
 
-		conn.send('t'+id);
+		server.sendMsg('t'+id);
 		$('.room.current').hide().removeClass('current');
 		var currentRoom = $('#room-'+id);
 		if(currentRoom.length == 0)
