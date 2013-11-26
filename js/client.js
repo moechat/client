@@ -97,7 +97,7 @@ $(function() {
 
 	function connect() {
 		server = new OTR({priv: privkey});
-		server.REQUIRE_ENCRYPTION = true;
+		//server.REQUIRE_ENCRYPTION = true;
 
 		server.on('io', function(msg) {
 			conn.send(msg);
@@ -110,7 +110,7 @@ $(function() {
 					return;
 				}
 
-				//console.log(msg);
+				console.log(msg);
 				var d;
 				var json = JSON.parse(msg);
 				if (json.error) {
