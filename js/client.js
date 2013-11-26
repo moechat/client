@@ -10,6 +10,8 @@ $(function() {
 	var msgRcvSnd = new Audio('/sounds/CRcv.mp3');
 	var errorSnd = new Audio('/sounds/Error.mp3');
 	var userbox = $('#userbox');
+	var privkey;
+
 	queryUsers();
 
 	function appendLog(msg, rooms) {
@@ -93,11 +95,8 @@ $(function() {
 
 	$('#roombtn-0').click(function() { switchRoom(0); });
 
-	if (window["WebSocket"]) {
-		var privkey = localStorage.privKey ? localStorage.privKey : new DSA();
-
+	function connect() {
 		server = new OTR({priv: privkey});
-		server.ALLOW_V2 = false;
 		server.REQUIRE_ENCRYPTION = true;
 
 		server.on('io', function(msg) {
@@ -118,6 +117,7 @@ $(function() {
 					errorSnd.play();
 					d = $('<div></div>').addClass('chat error panel');
 					d.append($('<b>').text(json.msg));
+					appendLog(d, [-1]);
 				} else if (json.cmd) {
 					switch (json.cmd) {
 					case "userjoin":
@@ -199,14 +199,30 @@ $(function() {
 			appendLog($('<div class="chat panel error">Connection closed.'
 			            + ' <a class="retry-btn">Reconnect</a>?</div>'));
 			$('#form').submit(null);
-			$('#send-btn').text('Reconnect').click(function() {window.location.reload();});
-			$('.retry-btn').click(function() {window.location.reload();});
+			$('#send-btn').text('Reconnect').click(connect);
+			$('.retry-btn').click(connect);
 			$('#msg,#username,#email').prop('disabled', true);
 		};
 
 		conn.onmessage = function(evt) {
 			server.receiveMsg(evt.data);
 		};
+	}
+
+	if (window["WebSocket"]) {
+		if(localStorage.privKey) {
+		privkey = localStorage.privKey;
+		} else {
+			var d = $('<div class="chat notif panel></div>');
+			d.text('Generating new key....');
+			appendLog(d, [-1]);
+
+			new DSA();
+
+			d.text('Generating new key.... Done.');
+		}
+
+		connect();
 	} else {
 		appendLog($('<div class="chat error panel"><b>Your browser does not support WebSockets.</b></div>'));
 	}
