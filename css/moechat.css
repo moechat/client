@@ -51,7 +51,7 @@ body {
 	clear: both;
 }
 
-.msg img {
+.msg > img {
 	display: block;
 	float: left;
 	height: 40px;
