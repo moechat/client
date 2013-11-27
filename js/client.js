@@ -106,7 +106,7 @@ $(function() {
 		//server.REQUIRE_ENCRYPTION = true;
 
 
-		$('.retry-btn').click(null);
+		$('.retry-btn').click(null).text('Reconnected.');
 
 		server.on('io', function(msg) {
 			conn.send(msg);
@@ -206,8 +206,8 @@ $(function() {
 		});
 
 		conn.onclose = function(evt) {
-			appendLog($('<div class="chat panel error">Connection closed.'
-			            + ' <a class="retry-btn">Reconnect</a>?</div>'));
+			appendLog($('<div class="chat panel disconnect error">Connection closed.'
+			            + ' <a class="retry-btn">Reconnect?</a></div>'));
 			$('#form').submit(null);
 			$('#send-btn').text('Reconnect').click(connect);
 			$('.retry-btn').click(connect);
