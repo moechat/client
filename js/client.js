@@ -105,6 +105,9 @@ $(function() {
 		server = new OTR({priv: privkey});
 		//server.REQUIRE_ENCRYPTION = true;
 
+
+		$('.retry-btn').click(null);
+
 		server.on('io', function(msg) {
 			conn.send(msg);
 		});
@@ -193,6 +196,9 @@ $(function() {
 					server.sendMsg('m' + m);
 				msgbox.val('');
 			});
+
+			$('#send-btn').text('Send').click($('#form').submit);
+			$('#msg,#username,#email').prop('disabled', false);
 		};
 
 		$(window).unload(function() {
