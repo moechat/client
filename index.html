@@ -4,13 +4,11 @@
 	<head>
 		<title>MoeChat</title>
 		<link rel="icon" type="image/png" href="img/icon.png">
-		<link rel="stylesheet" type="text/css" href="css/moechat.css">
-
-		<script src="js/moechat.min.js?v={{.Version}}"></script>
 
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width">
 		<link rel="stylesheet" href="css/foundation.css">
+		<link rel="stylesheet" type="text/css" href="css/moechat.css">
 	</head>
 	<body>
 		<div class="row">
@@ -65,12 +63,9 @@
 			</div>
 		</div>
 		<script type="text/javascript">
-			document.write('<script src=' + ('__proto__' in {} ? 'js/vendor/zepto' : 'js/vendor/jquery') + '.js><\/script>');
-		</script>
-		<script src="js/foundation.min.js"></script>
-
-		<script type="text/javascript">
 			$(document).foundation();
 		</script>
+
+		<script src="js/moechat.min.js?v={{.Version}}"></script>
 	</body>
 </html>
