@@ -12,8 +12,6 @@ $(function() {
 	var userbox = $('#userbox');
 	var privkey;
 
-	queryUsers();
-
 	function playSnd(snd) {
 		snd.pause();
 		snd.currentTime = 0;
@@ -102,11 +100,13 @@ $(function() {
 	$('#roombtn-0').click(function() { switchRoom(0); });
 
 	function connect() {
+		queryUsers();
+
 		server = new OTR({priv: privkey});
 		//server.REQUIRE_ENCRYPTION = true;
 
-
-		$('.retry-btn').click(null).text('Reconnected.');
+		$('.disconnect.error').last().html('Connection closed. Reconnecting...');
+		$('#send-btn').addClass('disabled');
 
 		server.on('io', function(msg) {
 			conn.send(msg);
@@ -197,8 +197,9 @@ $(function() {
 				msgbox.val('');
 			});
 
-			$('#send-btn').text('Send').click($('#form').submit);
+			$('#send-btn').removeClass('disabled').text('Send').click($('#form').submit);
 			$('#msg,#username,#email').prop('disabled', false);
+			$('.disconnect.error').last().html('Connection closed. Reconnected.');
 		};
 
 		$(window).unload(function() {
