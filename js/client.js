@@ -106,7 +106,7 @@ $(function() {
 		//server.REQUIRE_ENCRYPTION = true;
 
 		$('.disconnect.error').last().html('Connection closed. Reconnecting...');
-		$('#send-btn').addClass('disabled');
+		$('#send-btn,#img-picker').addClass('disabled');
 
 		server.on('io', function(msg) {
 			conn.send(msg);
@@ -198,6 +198,9 @@ $(function() {
 			});
 
 			$('#send-btn').removeClass('disabled').text('Send').click($('#form').submit);
+			$('#img-btn').removeClass('disabled').text('Upload Image').upload({
+				action: '/upload/img'
+			});
 			$('#msg,#username,#email').prop('disabled', false);
 			$('.disconnect.error').last().html('Connection closed. Reconnected.');
 		};
