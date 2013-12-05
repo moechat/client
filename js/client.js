@@ -105,7 +105,7 @@ $(function() {
 		server = new OTR({priv: privkey});
 		//server.REQUIRE_ENCRYPTION = true;
 
-		$('.disconnect.error').last().html('Connection closed. Reconnecting...');
+		$('.disconnect.error').last().html('Reconnecting...');
 		$('#send-btn,#img-btn').addClass('disabled');
 
 		server.on('io', function(msg) {
@@ -202,7 +202,7 @@ $(function() {
 				action: '/upload/img'
 			});*/
 			$('#msg,#username,#email').prop('disabled', false);
-			$('.disconnect.error').last().html('Connection closed. Reconnected.');
+			$('.disconnect.error').last().html('Reconnected.');
 		};
 
 		$(window).unload(function() {
