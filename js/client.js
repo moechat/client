@@ -10,6 +10,7 @@ $(function() {
 	var msgRcvSnd = new Audio('/sounds/talitha.mp3');
 	var errorSnd = new Audio('/sounds/Error.mp3');
 	var userbox = $('#userbox');
+	var uploadStack = new Array();
 	var privkey;
 
 	function playSnd(snd) {
@@ -115,7 +116,7 @@ $(function() {
 		server.on('ui', function(msg) {
 			try {
 				if(msg == 'p') {
-					conn.send('p');
+					server.sendMsg('p');
 					return;
 				}
 
@@ -129,6 +130,9 @@ $(function() {
 					appendLog(d, [-1]);
 				} else if (json.cmd) {
 					switch (json.cmd) {
+					case "idset":
+						user.ID = json.args.id;
+						break;
 					case "userjoin":
 						if(json.args.id != user.ID)
 							appendUser(json.args.name, json.args.email, json.args.id);
@@ -141,17 +145,20 @@ $(function() {
 						if(json.args.id != user.ID)
 							changeName(json.args.id, json.args.newname);
 						break;
-					case "emailchange":
-						if(json.args.id != user.ID)
-							changeEmail(json.args.id, json.args.email);
-						break;
 					case "fnamechange":
 						user.name = json.args.newname;
 						$('#username').val(user.name);
 						break;
-					case "idset":
-						user.ID = json.args.id;
+					case "emailchange":
+						if(json.args.id != user.ID)
+							changeEmail(json.args.id, json.args.email);
 						break;
+					case "uploadkey":
+						if(uploadStack.length > 0) {
+							var ul = uploadStack.pop();
+							ul.action("/upload/img?token=" + json.args.key);
+							ul.submit();
+						}
 					default: break;
 					}
 				} else if (json.notif) {
@@ -198,9 +205,13 @@ $(function() {
 			});
 
 			$('#send-btn').removeClass('disabled').text('Send').click($('#form').submit);
-			/*$('#img-btn').removeClass('disabled').text('Upload Image').upload({
-				action: '/upload/img'
-			});*/
+			var ul = $('#img-btn').removeClass('disabled').text('Upload Image').upload({
+				autoSubmit: false,
+				onSubmit: function() {
+					uploadStack.push(ul);
+					server.sendMsg("k");
+				}
+			});
 			$('#msg,#username,#email').prop('disabled', false);
 			$('.disconnect.error').last().html('Reconnected.');
 		};
