@@ -7,7 +7,7 @@ $(function() {
 	var user = {};
 	var users = {};
 	var msgbox = $('#msg');
-	var msgRcvSnd = new Audio('/sounds/CRcv.mp3');
+	var msgRcvSnd = new Audio('/sounds/talitha.mp3');
 	var errorSnd = new Audio('/sounds/Error.mp3');
 	var userbox = $('#userbox');
 	var privkey;
@@ -106,7 +106,7 @@ $(function() {
 		//server.REQUIRE_ENCRYPTION = true;
 
 		$('.disconnect.error').last().html('Connection closed. Reconnecting...');
-		$('#send-btn,#img-picker').addClass('disabled');
+		$('#send-btn,#img-btn').addClass('disabled');
 
 		server.on('io', function(msg) {
 			conn.send(msg);
@@ -198,9 +198,9 @@ $(function() {
 			});
 
 			$('#send-btn').removeClass('disabled').text('Send').click($('#form').submit);
-			$('#img-btn').removeClass('disabled').text('Upload Image').upload({
+			/*$('#img-btn').removeClass('disabled').text('Upload Image').upload({
 				action: '/upload/img'
-			});
+			});*/
 			$('#msg,#username,#email').prop('disabled', false);
 			$('.disconnect.error').last().html('Connection closed. Reconnected.');
 		};
