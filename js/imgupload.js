@@ -17,7 +17,8 @@ MoeChat.initImgUploads = function() {
 	});
 
 	MoeChat.imgUpload.submit = function(token) {
-		form.attr('action', "//moechat.sauyon.com/upload?type=img&token=" + token);
+		var params = $.param({target: MoeChat.roomID, token: token});
+		form.attr('action', "//moechat.sauyon.com/upload?" + params);
 
 		form.submit();
 
