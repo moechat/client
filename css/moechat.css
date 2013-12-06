@@ -137,6 +137,10 @@ body {
 	margin-left: 20px;
 }
 
+#img-div {
+	display: none;
+}
+
 .error {
 	color: red;
 }

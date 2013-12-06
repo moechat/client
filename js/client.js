@@ -1,17 +1,21 @@
 var $, localStorage, Audio, WebSocket, OTR, DSA;
 
+var MoeChat = {};
+
 var version = '0.0.16';
 $(function() {
-	var xhr, conn, server;
-	var roomID = 0;
-	var user = {};
-	var users = {};
-	var msgbox = $('#msg');
-	var msgRcvSnd = new Audio('/sounds/talitha.mp3');
-	var errorSnd = new Audio('/sounds/Error.mp3');
-	var userbox = $('#userbox');
-	var uploadStack = new Array();
-	var privkey;
+	MoeChat.imgBtn = $('#img-btn');
+	MoeChat.roomID = 0;
+	MoeChat.user = {};
+	MoeChat.users = {};
+	MoeChat.msgbox = $('#msgbox');
+	MoeChat.userbox = $('#userbox');
+	MoeChat.imgbtn = $('#img-btn');
+
+	MoeChat.options = {};
+	MoeChat.options.msgRcvSnd = new Audio('/sounds/talitha.mp3');
+	MoeChat.options.msgSendSnd = false;
+	MoeChat.options.errorSnd = new Audio('/sounds/Error.mp3');
 
 	function playSnd(snd) {
 		snd.pause();
@@ -40,7 +44,7 @@ $(function() {
 		var log = $('#room-'+room+' .log');
 		var msgwrap = $('#room-'+room+' .msgwrap');
 
-		if (uid != user.ID) playSnd(msgRcvSnd);
+		if (uid != MoeChat.user.ID) playSnd(MoeChat.options.msgRcvSnd);
 
 		if (uid == msgwrap.children(':last').data('uid')) {
 			var lmsg = msgwrap.find(':last-child .msg-body');
@@ -50,12 +54,12 @@ $(function() {
 			var u = $('<h6 class="name">');
 			var m = $('<div class="msg-body">');
 
-			if (uid == user.ID) {
-				d.append($('<img>').attr('src', user.img));
-				u.text(user.name);
+			if (uid == MoeChat.user.ID) {
+				d.append($('<img>').attr('src', MoeChat.user.img));
+				u.text(MoeChat.user.name);
 			} else {
-				d.append($('<img>').attr('src', users[uid].img));
-				u.text(users[uid].name);
+				d.append($('<img>').attr('src', MoeChat.users[uid].img));
+				u.text(MoeChat.users[uid].name);
 			}
 
 			m.html(msg);
@@ -68,30 +72,30 @@ $(function() {
 		log.scrollTop(msgwrap.height() - log.height());
 	}
 
-	$('#username').focusout(function() {
+	$('#username').change(function() {
 		var newname = $('#username').val().trim();
 		$('#username').val(newname);
-		if(newname && newname != user.name) {
-			user.name = newname;
-			localStorage.username = user.name;
-			conn.send("u" + user.name);
+		if(newname) {
+			MoeChat.user.name = newname;
+			localStorage.username = MoeChat.user.name;
+			MoeChat.conn.send("u" + MoeChat.user.name);
 		}
 	});
-	$('#email').focusout(function() {
+	$('#email').change(function() {
 		var newemail = $('#email').val().trim();
 		$('#email').val(newemail);
 		newemail = newemail.toLowerCase();
-		if(newemail && newemail != user.email) {
-			user.email = newemail;
-			var md5 = $.md5(user.email);
+		if(newemail) {
+			MoeChat.user.email = newemail;
+			var md5 = $.md5(MoeChat.user.email);
 			var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
-			user.img = imgurl;
-			localStorage.email = user.email;
-			conn.send("e" + user.email);
+			MoeChat.user.img = imgurl;
+			localStorage.email = MoeChat.user.email;
+			MoeChat.conn.send("e" + MoeChat.user.email);
 		}
 	});
 
-	msgbox.keydown(function (e) {
+	MoeChat.msgbox.keydown(function (e) {
 		if (!e.shiftKey && e.keyCode == 13) {
 			e.preventDefault();
 			$('#form').submit();
@@ -101,22 +105,23 @@ $(function() {
 	$('#roombtn-0').click(function() { switchRoom(0); });
 
 	function connect() {
+		MoeChat.userbox.html('');
 		queryUsers();
 
-		server = new OTR({priv: privkey});
+		MoeChat.server = new OTR({priv: MoeChat.privkey});
 		//server.REQUIRE_ENCRYPTION = true;
 
 		$('.disconnect.error').last().text('Reconnecting...');
 		$('#send-btn,#img-btn').addClass('disabled');
 
-		server.on('io', function(msg) {
-			conn.send(msg);
+		MoeChat.server.on('io', function(msg) {
+			MoeChat.conn.send(msg);
 		});
 
-		server.on('ui', function(msg) {
+		MoeChat.server.on('ui', function(msg) {
 			try {
 				if(msg == 'p') {
-					server.sendMsg('p');
+					MoeChat.server.sendMsg('p');
 					return;
 				}
 
@@ -124,41 +129,38 @@ $(function() {
 				var d;
 				var json = JSON.parse(msg);
 				if (json.error) {
-					playSnd(errorSnd);
+					playSnd(MoeChat.options.errorSnd);
 					d = $('<div></div>').addClass('chat error panel');
 					d.append($('<b>').text(json.msg));
 					appendLog(d, [-1]);
 				} else if (json.cmd) {
 					switch (json.cmd) {
 					case "idset":
-						user.ID = json.args.id;
+						MoeChat.user.ID = json.args.id;
 						break;
 					case "userjoin":
-						if(json.args.id != user.ID)
+						if(json.args.id != MoeChat.user.ID)
 							appendUser(json.args.name, json.args.email, json.args.id);
 						break;
 					case "userleave":
-						if(json.args.id != user.ID)
+						if(json.args.id != MoeChat.user.ID)
 							removeUser(json.args.id);
 						break;
 					case "namechange":
-						if(json.args.id != user.ID)
+						if(json.args.id != MoeChat.user.ID)
 							changeName(json.args.id, json.args.newname);
 						break;
 					case "fnamechange":
-						user.name = json.args.newname;
-						$('#username').val(user.name);
+						MoeChat.user.name = json.args.newname;
+						$('#username').val(MoeChat.user.name);
 						break;
 					case "emailchange":
-						if(json.args.id != user.ID)
+						if(json.args.id != MoeChat.user.ID)
 							changeEmail(json.args.id, json.args.email);
 						break;
 					case "uploadkey":
-						if(uploadStack.length > 0) {
-							var ul = uploadStack.pop();
-							ul.action("/upload/img?token=" + json.args.key);
-							ul.submit();
-						}
+						MoeChat.imgUpload.action("/upload/img?token=" + json.args.key);
+						MoeChat.imgUpload.submit();
 					default: break;
 					}
 				} else if (json.notif) {
@@ -171,56 +173,49 @@ $(function() {
 					appendMsg(json.user, json.msg, json.target);
 				}
 			} catch (e) {
-				playSnd(errorSnd);
+				playSnd(MoeChat.options.errorSnd);
 				appendLog($('<div class="chat error panel"><div/>').text('Error "'+e+'" while parsing message: '+msg));
 			}
 		});
 
-		conn = new WebSocket("ws://moechat.sauyon.com/chat");
-		conn.onopen = function() {
-			server.sendMsg("v" + version);
+		MoeChat.conn = new WebSocket("ws://moechat.sauyon.com/chat");
+		MoeChat.conn.onopen = function() {
+			MoeChat.server.sendMsg("v" + version);
 
-			user.email = localStorage.email ? localStorage.email : '';
-			var md5 = $.md5(user.email.toLowerCase().trim());
+			MoeChat.user.email = localStorage.email ? localStorage.email : '';
+			var md5 = $.md5(MoeChat.user.email.toLowerCase().trim());
 			var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
-			user.img = imgurl;
-			$('#email').val(user.email);
-			if(user.email) server.sendMsg("e" + user.email);
+			MoeChat.user.img = imgurl;
+			$('#email').val(MoeChat.user.email);
+			if(MoeChat.user.email) MoeChat.server.sendMsg("e" + MoeChat.user.email);
 
-			user.name = localStorage.username ? localStorage.username : "anon";
-			$('#username').val(user.name);
-			server.sendMsg("u" + user.name);
+			MoeChat.user.name = localStorage.username ? localStorage.username : "anon";
+			$('#username').val(MoeChat.user.name);
+			MoeChat.server.sendMsg("u" + MoeChat.user.name);
 
 			$("#form").submit(function(evt) {
 				evt.preventDefault();
-				if (!conn) return;
-				var m = msgbox.val();
+				if (!MoeChat.conn) return;
+				var m = MoeChat.msgbox.val();
 				if (!m) return;
 
 				if(m.indexOf("/") == 0)
-					server.sendMsg('c' + m.substring(1));
+					MoeChat.server.sendMsg('c' + m.substring(1));
 				else
-					server.sendMsg('m' + m);
-				msgbox.val('');
+					MoeChat.server.sendMsg('m' + m);
+				MoeChat.msgbox.val('');
 			});
 
 			$('#send-btn').removeClass('disabled').text('Send').click($('#form').submit);
-			var ul = $('#img-btn').removeClass('disabled').text('Upload Image').upload({
-				autoSubmit: false,
-				onSubmit: function() {
-					uploadStack.push(ul);
-					server.sendMsg("k");
-				}
-			});
 			$('#msg,#username,#email').prop('disabled', false);
 			$('.disconnect.error').last().text('Reconnected.');
 		};
 
 		$(window).unload(function() {
-			conn.close();
+			MoeChat.conn.close();
 		});
 
-		conn.onclose = function(evt) {
+		MoeChat.conn.onclose = function(evt) {
 			appendLog($('<div class="chat panel disconnect error">Connection closed.'
 			            + ' <a class="retry-btn">Reconnect?</a></div>'));
 			$('#form').submit(null);
@@ -229,14 +224,14 @@ $(function() {
 			$('#msg,#username,#email').prop('disabled', true);
 		};
 
-		conn.onmessage = function(evt) {
-			server.receiveMsg(evt.data);
+		MoeChat.conn.onmessage = function(evt) {
+			MoeChat.server.receiveMsg(evt.data);
 		};
 	}
 
 	if (window["WebSocket"]) {
 		if(localStorage.privKey) {
-		privkey = localStorage.privKey;
+			MoeChat.privkey = localStorage.privKey;
 		} else {
 			var d = $('<div class="chat notif panel></div>');
 			d.text('Generating new key....');
@@ -276,9 +271,9 @@ $(function() {
 		e.html('<img src="'+imgurl+'">');
 		e.append($('<span class="name">').text(username));
 		e.click(function(evt) { switchRoom(id); });
-		userbox.append(e);
+		MoeChat.userbox.append(e);
 
-		users[id] = {
+		MoeChat.users[id] = {
 			name: username,
 			email: email,
 			img: imgurl
@@ -293,7 +288,7 @@ $(function() {
 
 	function changeName(id, newname) {
 		$('#user-'+id+' .name').text(newname);
-		users[id].name = newname;
+		MoeChat.users[id].name = newname;
 	}
 
 	function changeEmail(id, newemail) {
@@ -304,19 +299,19 @@ $(function() {
 
 		$('#user-'+id+' img').attr('src', imgurl);
 
-		users[id].email = newemail;
-		users[id].img = imgurl;
+		MoeChat.users[id].email = newemail;
+		MoeChat.users[id].img = imgurl;
 	}
 
 	function switchRoom(id) {
-		if(id == roomID) return;
-		roomID = id;
+		if(id == MoeChat.roomID) return;
+		MoeChat.roomID = id;
 
 		$('#chatroom-column .active').removeClass('active');
 		if(id) $('#user-'+id).addClass('active');
 		else $('#roombtn-0').addClass('active');
 
-		server.sendMsg('t'+id);
+		MoeChat.server.sendMsg('t'+id);
 		$('.room.current').hide().removeClass('current');
 		var currentRoom = $('#room-'+id);
 		if(currentRoom.length == 0)
@@ -328,7 +323,7 @@ $(function() {
 	function createRoom(id) {
 		var room = $('<div></div>');
 		room.attr('id', 'room-'+id).addClass('room');
-		room.append($('<h3>').text(users[id].name));
+		room.append($('<h3>').text(MoeChat.users[id].name));
 		room.append($('<div class="log"><div class="msgwrap">'));
 		room.hide();
 		$('#roomwrap').append(room);
