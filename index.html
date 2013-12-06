@@ -8,7 +8,7 @@
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width">
 		<link rel="stylesheet" href="css/foundation.css">
-		<link rel="stylesheet" type="text/css" href="css/moechat.css">
+		<link rel="stylesheet" type="text/css" href="css/moechat.css?v={{.Version}}">
 	</head>
 	<body>
 		<div class="row">
@@ -64,12 +64,14 @@
 			</div>
 		</div>
 
+
 		<div id="img-div">
-			<iframe name="img-iframe"></iframe>
+			<iframe id="img-iframe" name="img-iframe"></iframe>
 			<form method="post" enctype="multipart/form-data" target="img-iframe">
 				<input name="image" type="file">
 			</form>
 		</div>
+
 		<script src="js/moechat.min.js?v={{.Version}}"></script>
 
 		<script type="text/javascript">
