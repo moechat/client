@@ -152,7 +152,7 @@ $(function() {
 							changeEmail(json.args.id, json.args.email);
 						break;
 					case "uploadkey":
-						MoeChat.imgUpload.action("/upload/img?token=" + json.args.key);
+						MoeChat.imgUpload.action("//moechat.sauyon.com/upload/img?token=" + json.args.key);
 						MoeChat.imgUpload.submit();
 					default: break;
 					}
