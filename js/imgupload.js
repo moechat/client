@@ -1,7 +1,10 @@
 var MoeChat, $;
 
-$(function(){
-	var iframe = $('#img-div iframe');
+MoeChat = {};
+
+MoeChat.initImgUploads = function() {
+	MoeChat.imgUpload = {};
+
 	var form = $('#img-div form');
 	var input = $('#img-div input');
 
@@ -10,7 +13,7 @@ $(function(){
 	});
 
 	input.change(function() {
-		MoeChat.server.sendMsg('k');
+		MoeChat.otr.sendMsg('k');
 	});
 
 	MoeChat.imgUpload.action = function(a) {
@@ -20,12 +23,15 @@ $(function(){
 	MoeChat.imgUpload.submit = function() {
 		form.submit();
 
-		iframe.unbind().load(function() {
-			var response = $(iframe.contentWindow.document.body).html();
+		$('#img-div iframe').unbind().load(function() {
+			var iframe = window.frames['img-iframe'];
+			var response = $(iframe.document.body).text();
 
 			if(response) {
-
+				var d = $('<div class="chat error panel"></div>');
+				d.text('Error uploading image: '+response);
+				MoeChat.appendLog(d);
 			}
 		});
 	};
-});
+};

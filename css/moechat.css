@@ -127,11 +127,11 @@ body {
 	background: #f2f2f2;
 }
 
-#msg {
+#msgbox {
 	height: auto;
 }
 
-#form button {
+#send-btn, #img-btn {
 	float: right;
 	margin-bottom: 0;
 	margin-left: 20px;

@@ -1,6 +1,4 @@
-var $, localStorage, Audio, WebSocket, OTR, DSA;
-
-var MoeChat = {};
+var MoeChat, $, Audio, localStorage, WebSocket, OTR, DSA;
 
 var version = '0.0.16';
 $(function() {
@@ -17,13 +15,15 @@ $(function() {
 	MoeChat.options.msgSendSnd = false;
 	MoeChat.options.errorSnd = new Audio('/sounds/Error.mp3');
 
+	MoeChat.initImgUploads();
+
 	function playSnd(snd) {
 		snd.pause();
 		snd.currentTime = 0;
 		snd.play();
 	}
 
-	function appendLog(msg, rooms) {
+	MoeChat.appendLog = function(msg, rooms) {
 		var log, msgwrap;
 		if(rooms) {
 			rooms.forEach(function(room) {
@@ -38,7 +38,7 @@ $(function() {
 			msgwrap.append(msg);
 			log.scrollTop(msgwrap.height() - log.height());
 		}
-	}
+	};
 
 	function appendMsg(uid, msg, room) {
 		var log = $('#room-'+room+' .log');
@@ -95,33 +95,26 @@ $(function() {
 		}
 	});
 
-	MoeChat.msgbox.keydown(function (e) {
-		if (!e.shiftKey && e.keyCode == 13) {
-			e.preventDefault();
-			$('#form').submit();
-		}
-	});
-
 	$('#roombtn-0').click(function() { switchRoom(0); });
 
 	function connect() {
 		MoeChat.userbox.html('');
 		queryUsers();
 
-		MoeChat.server = new OTR({priv: MoeChat.privkey});
-		//server.REQUIRE_ENCRYPTION = true;
+		MoeChat.otr = new OTR({priv: MoeChat.privkey});
+		//MoeChat.otr.REQUIRE_ENCRYPTION = true;
 
 		$('.disconnect.error').last().text('Reconnecting...');
 		$('#send-btn,#img-btn').addClass('disabled');
 
-		MoeChat.server.on('io', function(msg) {
+		MoeChat.otr.on('io', function(msg) {
 			MoeChat.conn.send(msg);
 		});
 
-		MoeChat.server.on('ui', function(msg) {
+		MoeChat.otr.on('ui', function(msg) {
 			try {
 				if(msg == 'p') {
-					MoeChat.server.sendMsg('p');
+					MoeChat.otr.sendMsg('p');
 					return;
 				}
 
@@ -132,7 +125,7 @@ $(function() {
 					playSnd(MoeChat.options.errorSnd);
 					d = $('<div></div>').addClass('chat error panel');
 					d.append($('<b>').text(json.msg));
-					appendLog(d, [-1]);
+					MoeChat.appendLog(d, [-1]);
 				} else if (json.cmd) {
 					switch (json.cmd) {
 					case "idset":
@@ -166,7 +159,7 @@ $(function() {
 				} else if (json.notif) {
 					d = $('<div></div>').addClass('chat notif panel');
 					d.append($('<i>').text(json.notif));
-					appendLog(d, json.targets);
+					MoeChat.appendLog(d, json.targets);
 				} else if (json.msg) {
 					if(json.target && $('#room-'+json.target).length == 0) createRoom(json.target);
 
@@ -174,39 +167,47 @@ $(function() {
 				}
 			} catch (e) {
 				playSnd(MoeChat.options.errorSnd);
-				appendLog($('<div class="chat error panel"><div/>').text('Error "'+e+'" while parsing message: '+msg));
+				MoeChat.appendLog($('<div class="chat error panel"><div/>').text('Error "'+e+'" while parsing message: '+msg));
 			}
 		});
 
 		MoeChat.conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		MoeChat.conn.onopen = function() {
-			MoeChat.server.sendMsg("v" + version);
+			MoeChat.otr.sendMsg("v" + version);
 
 			MoeChat.user.email = localStorage.email ? localStorage.email : '';
 			var md5 = $.md5(MoeChat.user.email.toLowerCase().trim());
 			var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 			MoeChat.user.img = imgurl;
 			$('#email').val(MoeChat.user.email);
-			if(MoeChat.user.email) MoeChat.server.sendMsg("e" + MoeChat.user.email);
+			if(MoeChat.user.email) MoeChat.otr.sendMsg("e" + MoeChat.user.email);
 
 			MoeChat.user.name = localStorage.username ? localStorage.username : "anon";
 			$('#username').val(MoeChat.user.name);
-			MoeChat.server.sendMsg("u" + MoeChat.user.name);
+			MoeChat.otr.sendMsg("u" + MoeChat.user.name);
 
-			$("#form").submit(function(evt) {
-				evt.preventDefault();
+			MoeChat.sendMsg = function(message) {
 				if (!MoeChat.conn) return;
-				var m = MoeChat.msgbox.val();
-				if (!m) return;
+				if (!message) return;
 
-				if(m.indexOf("/") == 0)
-					MoeChat.server.sendMsg('c' + m.substring(1));
+				if(message.indexOf("/") == 0)
+					MoeChat.otr.sendMsg('c' + message.substring(1));
 				else
-					MoeChat.server.sendMsg('m' + m);
+					MoeChat.otr.sendMsg('m' + message);
+			};
+
+			MoeChat.msgbox.keydown(function (e) {
+				if (!e.shiftKey && e.keyCode == 13) {
+					e.preventDefault();
+					MoeChat.sendMsg(MoeChat.msgbox.val());
+					MoeChat.msgbox.val('');
+				}
+			});
+			$('#send-btn').removeClass('disabled').text('Send').click(function() {
+				MoeChat.sendMsg(MoeChat.msgbox.val());
 				MoeChat.msgbox.val('');
 			});
-
-			$('#send-btn').removeClass('disabled').text('Send').click($('#form').submit);
+			$('#img-btn').removeClass('disabled');
 			$('#msg,#username,#email').prop('disabled', false);
 			$('.disconnect.error').last().text('Reconnected.');
 		};
@@ -216,16 +217,16 @@ $(function() {
 		});
 
 		MoeChat.conn.onclose = function(evt) {
-			appendLog($('<div class="chat panel disconnect error">Connection closed.'
-			            + ' <a class="retry-btn">Reconnect?</a></div>'));
-			$('#form').submit(null);
+			MoeChat.appendLog($('<div class="chat panel disconnect error">Connection closed.'
+			                    + ' <a class="retry-btn">Reconnect?</a></div>'));
+			MoeChat.msgbox.keydown(null);
 			$('#send-btn').text('Reconnect').click(connect);
 			$('.retry-btn').click(connect);
 			$('#msg,#username,#email').prop('disabled', true);
 		};
 
 		MoeChat.conn.onmessage = function(evt) {
-			MoeChat.server.receiveMsg(evt.data);
+			MoeChat.otr.receiveMsg(evt.data);
 		};
 	}
 
@@ -235,7 +236,7 @@ $(function() {
 		} else {
 			var d = $('<div class="chat notif panel></div>');
 			d.text('Generating new key....');
-			appendLog(d, [-1]);
+			MoeChat.appendLog(d, [-1]);
 
 			new DSA();
 
@@ -244,7 +245,7 @@ $(function() {
 
 		connect();
 	} else {
-		appendLog($('<div class="chat error panel"><b>Your browser does not support WebSockets.</b></div>'));
+		MoeChat.appendLog($('<div class="chat error panel"><b>Your browser does not support WebSockets.</b></div>'));
 	}
 
 	function queryUsers() {
@@ -311,7 +312,7 @@ $(function() {
 		if(id) $('#user-'+id).addClass('active');
 		else $('#roombtn-0').addClass('active');
 
-		MoeChat.server.sendMsg('t'+id);
+		MoeChat.otr.sendMsg('t'+id);
 		$('.room.current').hide().removeClass('current');
 		var currentRoom = $('#room-'+id);
 		if(currentRoom.length == 0)
