@@ -152,8 +152,7 @@ $(function() {
 							changeEmail(json.args.id, json.args.email);
 						break;
 					case "uploadkey":
-						MoeChat.imgUpload.action("//moechat.sauyon.com/upload/img?token=" + json.args.key);
-						MoeChat.imgUpload.submit();
+						MoeChat.imgUpload.submit(json.args.key);
 					default: break;
 					}
 				} else if (json.notif) {

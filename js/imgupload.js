@@ -16,11 +16,9 @@ MoeChat.initImgUploads = function() {
 		MoeChat.otr.sendMsg('k');
 	});
 
-	MoeChat.imgUpload.action = function(a) {
-		form.attr('action', a);
-	};
+	MoeChat.imgUpload.submit = function(token) {
+		form.attr('action', "//moechat.sauyon.com/upload?type=img&token=" + token);
 
-	MoeChat.imgUpload.submit = function() {
 		form.submit();
 
 		$('#img-div iframe').unbind().load(function() {
