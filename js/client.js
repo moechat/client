@@ -1,6 +1,6 @@
 var MoeChat, $, Audio, localStorage, WebSocket, OTR, DSA;
 
-var version = '0.0.16';
+var version = '0.0.17';
 $(function() {
 	MoeChat.imgBtn = $('#img-btn');
 	MoeChat.roomID = 0;
@@ -102,7 +102,7 @@ $(function() {
 		queryUsers();
 
 		MoeChat.otr = new OTR({priv: MoeChat.privkey});
-		//MoeChat.otr.REQUIRE_ENCRYPTION = true;
+		MoeChat.otr.REQUIRE_ENCRYPTION = true;
 
 		$('.disconnect.error').last().text('Reconnecting...');
 		$('#send-btn,#img-btn').addClass('disabled');
