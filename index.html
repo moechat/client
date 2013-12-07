@@ -11,13 +11,19 @@
 		<link rel="stylesheet" type="text/css" href="css/moechat.css?v={{.Version}}">
 	</head>
 	<body>
+		<div id="settings-modal" class="small reveal-modal" data-reveal>
+			<h2>Settings</h2>
+			<p class="lead">All your free customization</p>
+			<p>Encryption is enabled and there is nothing you can do about it &lt;3</p>
+			<a class="close-reveal-modal">&#215;</a>
+		</div>
 		<div class="row">
 			<div class="large-10 columns">
 				<h1><a href="#" style="color:#97c1c9;">MoeChat</a></h1>
 				<p>This is version {{.Version}}</p>
 			</div>
 			<div class="large-2 columns">
-				<button id="settings-btn" class="tiny right">Settings</button>
+				<a href="#" id="settings-btn" data-reveal-id="settings-modal" class="tiny button right">Settings</a>
 			</div>
 			<hr>
 		</div>
