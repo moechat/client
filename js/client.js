@@ -25,7 +25,7 @@ $(function() {
 		newemail = newemail.toLowerCase();
 		if(newemail) {
 			MoeChat.user.email = newemail;
-			var md5 = $.md5(MoeChat.user.email);
+			var md5 = MoeChat.md5(MoeChat.user.email);
 			var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 			MoeChat.user.img = imgurl;
 			localStorage.email = MoeChat.user.email;

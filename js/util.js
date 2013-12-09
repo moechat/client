@@ -80,7 +80,7 @@ MoeChat.appendUser = function(username, email, id) {
 	if($('#user-'+id).length != 0) return false;
 
 	var e = $('<div></div>');
-	var md5 = $.md5(email.toLowerCase().trim());
+	var md5 = MoeChat.md5(email.toLowerCase().trim());
 	var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
 	e.attr('id', 'user-'+id).addClass('userbtn').data('id', id);
@@ -110,7 +110,7 @@ MoeChat.changeName = function(id, newname) {
 MoeChat.changeEmail = function(id, newemail) {
 	if($('#user-'+id).length == 0) return;
 
-	var md5 = $.md5(newemail.toLowerCase().trim());
+	var md5 = MoeChat.md5(newemail.toLowerCase().trim());
 	var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 
 	$('#user-'+id+' img').attr('src', imgurl);
@@ -146,4 +146,3 @@ MoeChat.appendRoom = function(id) {
 
 	return room;
 };
-
