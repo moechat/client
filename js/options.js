@@ -33,6 +33,7 @@ $(document).on('close', '[data-reveal]', function() {
 			MoeChat.options.enableOtr = !MoeChat.options.enableOtr;
 			if(MoeChat.options.enableOtr) {
 				MoeChat.newOtr();
+				MoeChat.otr.sendQueryMsg();
 			} else {
 				MoeChat.otr.endOtr();
 			}
