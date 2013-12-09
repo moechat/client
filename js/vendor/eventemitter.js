@@ -1,8 +1,8 @@
-/*!
+/**
+ * @preserve
  * EventEmitter v4.2.3 - git.io/ee
  * Oliver Caldwell
  * MIT license
- * @preserve
  */
 
 (function () {
