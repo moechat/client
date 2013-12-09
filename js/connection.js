@@ -23,7 +23,7 @@ MoeChat.newOtr = function() {
 			var d;
 			var json = JSON.parse(msg);
 			if (json.error) {
-				MoeChat.playSnd(MoeChat.sounds.errorSnd);
+				MoeChat.playSnd(MoeChat.sounds.error);
 				d = $('<div></div>').addClass('chat error panel');
 				d.append($('<b>').text(json.msg));
 				MoeChat.appendLog(d, [-1]);
@@ -63,18 +63,19 @@ MoeChat.newOtr = function() {
 				d.append($('<i>').text(json.notif));
 				MoeChat.appendLog(d, json.targets);
 			} else if (json.msg) {
+				if(json.user != MoeChat.user.ID) MoeChat.playSnd(MoeChat.sounds.msgRcv);
 				if(json.target && $('#room-'+json.target).length == 0) MoeChat.appendRoom(json.target);
 
 				MoeChat.appendMsg(json.user, json.msg, json.target);
 			}
 		} catch (e) {
-			MoeChat.playSnd(MoeChat.sounds.errorSnd);
+			MoeChat.playSnd(MoeChat.sounds.error);
 			MoeChat.appendLog($('<div class="chat error panel"><div/>').text('Error "'+e+'" while parsing message: '+msg));
 		}
 	});
 
 	MoeChat.otr.on('error', function(msg) {
-		MoeChat.playSnd(MoeChat.sounds.errorSnd);
+		MoeChat.playSnd(MoeChat.sounds.error);
 		var d = $('<div></div>').addClass('chat error panel');
 		d.append($('<b>').text(msg));
 		MoeChat.appendLog(d, [-1]);
@@ -142,6 +143,7 @@ MoeChat.newWsConn = function() {
 
 MoeChat.sendMsg = function(message) {
 	if (!MoeChat.conn || !message || MoeChat.user.id === false) return;
+	MoeChat.playSnd(MoeChat.sounds.msgSend);
 
 	if(message.indexOf("/") == 0)
 		MoeChat.otr.sendMsg('c' + message.substring(1));

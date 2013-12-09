@@ -33,8 +33,6 @@ MoeChat.appendMsg = function(uid, msg, room) {
 	var log = $('#room-'+room+' .log');
 	var msgwrap = $('#room-'+room+' .msgwrap');
 
-	if (uid != MoeChat.user.ID) MoeChat.playSnd(MoeChat.sounds.msgRcvSnd);
-
 	if (uid == msgwrap.children(':last').data('uid')) {
 		var lmsg = msgwrap.find(':last-child .msg-body');
 		lmsg.html(lmsg.html() + '<hr>' + msg);
