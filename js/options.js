@@ -4,7 +4,11 @@ MoeChat.version = '0.0.17';
 
 MoeChat.initOptions = function() {
 	if(localStorage.options) {
-		MoeChat.options = $.parseJSON(localStorage.options);
+		try {
+			MoeChat.options = $.parseJSON(localStorage.options);
+		} catch(err) {
+			localStorage.options = "";
+		}
 	} else {
 		MoeChat.options = {};
 		MoeChat.options.msgRcvSnd = '/sounds/talitha.mp3';
