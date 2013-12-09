@@ -102,17 +102,11 @@ $(function() {
 		$('#send-btn,#img-btn').addClass('disabled');
 
 		MoeChat.otr.on('io', function(msg) {
-			console.log('Sending: ' + msg);
 			MoeChat.conn.send(msg);
 		});
 
 		MoeChat.otr.on('ui', function(msg) {
 			try {
-				if(msg == 'p') {
-					MoeChat.otr.sendMsg('p');
-					return;
-				}
-
 				console.log('Receiving' + msg);
 				var d;
 				var json = JSON.parse(msg);
@@ -222,6 +216,11 @@ $(function() {
 		};
 
 		MoeChat.conn.onmessage = function(evt) {
+			if(evt.data == 'p') {
+				MoeChat.conn.send('p');
+				return;
+			}
+
 			MoeChat.otr.receiveMsg(evt.data);
 		};
 	}

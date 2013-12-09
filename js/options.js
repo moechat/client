@@ -1,6 +1,6 @@
 var MoeChat, $, Audio, localStorage;
 
-MoeChat.version = '0.0.17';
+MoeChat.version = '0.0.18';
 
 MoeChat.initOptions = function() {
 	if(localStorage.options) {
