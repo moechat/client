@@ -3,10 +3,6 @@ var MoeChat, $, localStorage, WebSocket, OTR, DSA;;
 $(function() {
 	MoeChat.roomID = 0;
 
-	MoeChat.user = {};
-	MoeChat.users = {};
-
-	MoeChat.dom = {};
 	MoeChat.dom.msgbox = $('#msgbox');
 	MoeChat.dom.userbox = $('#userbox');
 	MoeChat.dom.imgbtn = $('#img-btn');

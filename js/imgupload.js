@@ -1,6 +1,6 @@
 var MoeChat, $;
 
-MoeChat.initUploads = function() {
+MoeChat.initImgUploads = function() {
 	MoeChat.imgUpload = {};
 
 	var form = $('#img-div form');

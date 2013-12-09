@@ -13,7 +13,7 @@ java -jar $1 \
 	--js util.js \
 	--js options.js \
 	--js connection.js \
-	--js upload.js \
+	--js imgupload.js \
 	--js client.js \
 	--js vendor/modernizr.js \
 	--create_source_map ./moechat.min.map \

@@ -10,7 +10,6 @@ MoeChat.initOptions = function() {
 			localStorage.options = "";
 		}
 	} else {
-		MoeChat.options = {};
 		MoeChat.options.msgRcvSnd = '/sounds/talitha.mp3';
 		MoeChat.options.msgSendSnd = false;
 		MoeChat.options.errorSnd = '/sounds/Error.mp3';
@@ -19,7 +18,6 @@ MoeChat.initOptions = function() {
 		localStorage.options = JSON.stringify(MoeChat.options);
 	}
 
-	MoeChat.sounds = {};
 	MoeChat.sounds.msgRcv = new Audio(MoeChat.options.msgRcvSnd);
 	MoeChat.sounds.msgSend = new Audio(MoeChat.options.msgSendSnd);
 	MoeChat.sounds.error = new Audio(MoeChat.options.errorSnd);

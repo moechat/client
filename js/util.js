@@ -1,6 +1,11 @@
 var $;
 
 var MoeChat = {};
+MoeChat.options = {};
+MoeChat.sounds = {};
+MoeChat.user = {};
+MoeChat.users = {};
+MoeChat.dom = {};
 
 MoeChat.playSnd = function(snd) {
 	snd.pause();
