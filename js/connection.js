@@ -87,7 +87,7 @@ MoeChat.newWsConn = function() {
 		MoeChat.otr.sendMsg("v" + MoeChat.version);
 
 		MoeChat.user.email = localStorage.email ? localStorage.email : '';
-		var md5 = $.md5(MoeChat.user.email.toLowerCase().trim());
+		var md5 = MoeChat.md5(MoeChat.user.email.toLowerCase().trim());
 		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
 		MoeChat.user.img = imgurl;
 		$('#email').val(MoeChat.user.email);
