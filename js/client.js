@@ -102,6 +102,7 @@ $(function() {
 		$('#send-btn,#img-btn').addClass('disabled');
 
 		MoeChat.otr.on('io', function(msg) {
+			console.log('Sending: ' + msg);
 			MoeChat.conn.send(msg);
 		});
 
@@ -112,7 +113,7 @@ $(function() {
 					return;
 				}
 
-				console.log(msg);
+				console.log('Receiving' + msg);
 				var d;
 				var json = JSON.parse(msg);
 				if (json.error) {
