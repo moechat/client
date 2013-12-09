@@ -54,3 +54,5 @@ $(function() {
 		MoeChat.appendLog($('<div class="chat error panel"><b>Your browser does not support WebSockets.</b></div>'));
 	}
 });
+
+$(document).foundation();
