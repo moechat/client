@@ -159,6 +159,13 @@ $(function() {
 			}
 		});
 
+		MoeChat.otr.on('error', function(msg) {
+			playSnd(MoeChat.sounds.errorSnd);
+			d = $('<div></div>').addClass('chat error panel');
+			d.append($('<b>').text(msg));
+			MoeChat.appendLog(d, [-1]);
+		});
+
 		MoeChat.conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		MoeChat.conn.onopen = function() {
 			if(MoeChat.options.enableOtr) MoeChat.otr.sendQueryMsg();
