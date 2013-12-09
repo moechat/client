@@ -97,7 +97,6 @@ $(function() {
 		queryUsers();
 
 		MoeChat.otr = new OTR({priv: MoeChat.privkey});
-		if(MoeChat.options.enableOtr) MoeChat.otr.sendQueryMsg();
 
 		$('.disconnect.error').last().text('Reconnecting...');
 		$('#send-btn,#img-btn').addClass('disabled');
@@ -167,6 +166,8 @@ $(function() {
 
 		MoeChat.conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		MoeChat.conn.onopen = function() {
+			if(MoeChat.options.enableOtr) MoeChat.otr.sendQueryMsg();
+
 			MoeChat.otr.sendMsg("v" + MoeChat.version);
 
 			MoeChat.user.email = localStorage.email ? localStorage.email : '';
