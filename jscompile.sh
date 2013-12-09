@@ -3,8 +3,9 @@
 cd /srv/chat/js
 java -jar $1 \
 	--js vendor/jquery.js \
-	--js vendor/foundation.min.js \
 	--js vendor/jquery.md5.js \
+	--js foundation/foundation.js \
+	--js foundation/foundation.reveal.js \
 	--js vendor/bigint.js \
 	--js vendor/crypto.js \
 	--js vendor/eventemitter.js \
