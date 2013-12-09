@@ -1,4 +1,4 @@
-var MoeChat, $, localStorage, WebSocket, OTR, DSA;;
+var MoeChat, $, localStorage, WebSocket, OTR, DSA, Modernizr;
 
 $(function() {
 	MoeChat.roomID = 0;
@@ -35,7 +35,7 @@ $(function() {
 
 	$('#roombtn-0').click(function() { MoeChat.switchRoom(0); });
 
-	if (window["WebSocket"]) {
+	if (Modernizr.websockets) {
 		if(localStorage.privkey) {
 			MoeChat.privkey = DSA.parsePrivate(localStorage.privkey);
 		} else {

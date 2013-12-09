@@ -3,6 +3,7 @@
 cd /srv/chat/js
 java -jar $1 \
 	--compilation_level ADVANCED_OPTIMIZATIONS \
+	--js vendor/modernizr.js \
 	--js vendor/jquery.js \
 	--js vendor/jquery.md5.js \
 	--js foundation/foundation.js \
@@ -16,7 +17,6 @@ java -jar $1 \
 	--js connection.js \
 	--js imgupload.js \
 	--js client.js \
-	--js vendor/modernizr.js \
 	--create_source_map ./moechat.min.map \
 	--source_map_format V3 \
 	--warning_level QUIET \
