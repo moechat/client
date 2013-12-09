@@ -62,7 +62,7 @@ MoeChat.queryUsers = function() {
 			MoeChat.dom.userbox.html('');
 			data.forEach(function (user) {
 				MoeChat.users[user.id] = new MoeChat.User(user.id, user.username, user.email);
-				MoeChat.appendUser(MoeChat.users[user.id]);
+				MoeChat.users[user.id].append();
 			});
 		}
 	});
