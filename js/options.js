@@ -31,7 +31,7 @@ $(document).on('close', '[data-reveal]', function() {
 	var modal = $(this);
 
 	if(modal.attr('id') == 'settings-modal') {
-		if(MoeChat.options.enableOtr != modal.Children('#enable-mitm').prop('checked')) {
+		if(MoeChat.options.enableOtr != modal.children('#enable-mitm').prop('checked')) {
 			MoeChat.options.enableOtr = !MoeChat.options.enableOtr;
 			if(MoeChat.options.enableOtr) {
 				MoeChat.otr.sendQueryMsg();
