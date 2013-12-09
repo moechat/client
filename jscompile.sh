@@ -10,8 +10,10 @@ java -jar $1 \
 	--js vendor/crypto.js \
 	--js vendor/eventemitter.js \
 	--js vendor/otr.js \
-	--js imgupload.js \
+	--js util.js \
 	--js options.js \
+	--js connection.js \
+	--js upload.js \
 	--js client.js \
 	--js vendor/modernizr.js \
 	--create_source_map ./moechat.min.map \

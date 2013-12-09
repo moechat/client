@@ -1,14 +1,12 @@
 var MoeChat, $;
 
-MoeChat = {};
-
-MoeChat.initImgUploads = function() {
+MoeChat.initUploads = function() {
 	MoeChat.imgUpload = {};
 
 	var form = $('#img-div form');
 	var input = $('#img-div input');
 
-	MoeChat.imgbtn.click(function() {
+	MoeChat.dom.imgbtn.click(function() {
 		input.click();
 	});
 
