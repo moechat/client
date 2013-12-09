@@ -17,3 +17,4 @@ java -jar $1 \
 	--source_map_format V3 \
 	--warning_level QUIET \
 	--js_output_file moechat.min.js
+echo "//@ sourceMappingURL=/js/moechat.min.map" >> moechat.min.js
