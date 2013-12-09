@@ -1,4 +1,4 @@
-var MoeChat, $, localStorage, WebSocket, OTR, DSA, Modernizr;
+/*global MoeChat, $, localStorage, WebSocket, OTR, DSA, Modernizr */
 
 $(function() {
 	MoeChat.roomID = 0;

@@ -1,4 +1,4 @@
-var MoeChat, $, Audio, localStorage;
+/*global MoeChat, $, Audio, localStorage */
 
 MoeChat.version = '0.0.18';
 

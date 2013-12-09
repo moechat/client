@@ -1,4 +1,4 @@
-var MoeChat, $;
+/*global MoeChat, $ */
 
 MoeChat.initImgUploads = function() {
 	MoeChat.imgUpload = {};

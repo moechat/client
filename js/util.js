@@ -1,4 +1,4 @@
-var $;
+/*global $ */
 
 var MoeChat = {};
 MoeChat.options = {};

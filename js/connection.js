@@ -1,4 +1,4 @@
-var MoeChat, $, OTR, WebSocket, localStorage;
+/*global MoeChat, $, OTR, WebSocket, localStorage */
 
 MoeChat.connect = function() {
 	MoeChat.queryUsers();
