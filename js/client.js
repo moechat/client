@@ -6,6 +6,7 @@ $(function() {
 	MoeChat.user = {};
 	MoeChat.users = {};
 
+	MoeChat.dom = {};
 	MoeChat.dom.msgbox = $('#msgbox');
 	MoeChat.dom.userbox = $('#userbox');
 	MoeChat.dom.imgbtn = $('#img-btn');
