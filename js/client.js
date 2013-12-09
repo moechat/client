@@ -1,5 +1,12 @@
 /*global MoeChat, $, localStorage, WebSocket, OTR, DSA, Modernizr */
 
+Modernizr.load([
+	{
+		test: Modernizr.audio,
+		nope: '//code.createjs.com/soundjs-0.5.0.min.js'
+	}
+]);
+
 $(function() {
 	MoeChat.roomID = 0;
 

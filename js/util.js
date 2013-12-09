@@ -3,7 +3,6 @@
 var MoeChat = {};
 MoeChat.options = {};
 MoeChat.sounds = {};
-MoeChat.user = {};
 MoeChat.users = {};
 MoeChat.dom = {};
 
@@ -60,63 +59,6 @@ MoeChat.appendMsg = function(uid, msg, room) {
 	}
 
 	log.scrollTop(msgwrap.height() - log.height());
-};
-
-MoeChat.queryUsers = function() {
-	$.ajax('http://moechat.sauyon.com/users', {
-		async: false,
-		crossDomain: false,
-		success: function(data) {
-			if (!data) return;
-			MoeChat.dom.userbox.html('');
-			data.forEach(function (user) {
-				MoeChat.appendUser(user.username, user.email, user.id);
-			});
-		}
-	});
-};
-
-MoeChat.appendUser = function(username, email, id) {
-	if($('#user-'+id).length != 0) return false;
-
-	var e = $('<div></div>');
-	var md5 = MoeChat.md5(email.toLowerCase().trim());
-	var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
-
-	e.attr('id', 'user-'+id).addClass('userbtn').data('id', id);
-	e.html('<img src="'+imgurl+'">');
-	e.append($('<span class="name">').text(username));
-	e.click(function(evt) { MoeChat.switchRoom(id); });
-	MoeChat.dom.userbox.append(e);
-
-	MoeChat.users[id] = {
-		name: username,
-		email: email,
-		img: imgurl
-	};
-
-	return e;
-};
-
-MoeChat.removeUser = function(id) {
-	$('#user-'+id).remove();
-};
-
-MoeChat.changeName = function(id, newname) {
-	$('#user-'+id+' .name').text(newname);
-	MoeChat.users[id].name = newname;
-};
-
-MoeChat.changeEmail = function(id, newemail) {
-	if($('#user-'+id).length == 0) return;
-
-	var md5 = MoeChat.md5(newemail.toLowerCase().trim());
-	var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
-
-	$('#user-'+id+' img').attr('src', imgurl);
-
-	MoeChat.users[id].email = newemail;
-	MoeChat.users[id].img = imgurl;
 };
 
 MoeChat.switchRoom = function(id) {

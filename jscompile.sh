@@ -16,6 +16,7 @@ java -jar $1 \
 	--js util.js \
 	--js md5.js \
 	--js options.js \
+	--js users.js \
 	--js connection.js \
 	--js imgupload.js \
 	--js client.js \

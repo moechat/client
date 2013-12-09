@@ -30,27 +30,29 @@ MoeChat.newOtr = function() {
 			} else if (json.cmd) {
 				switch (json.cmd) {
 				case "idset":
-					MoeChat.user.ID = json.args.id;
+					MoeChat.user.setId(json.args.id);
 					break;
 				case "userjoin":
-					if(json.args.id != MoeChat.user.ID)
-						MoeChat.appendUser(json.args.name, json.args.email, json.args.id);
+					if(json.args.id != MoeChat.user.id) {
+						MoeChat.users[json.args.id] = new MoeChat.User(json.args.id, json.args.name, json.args.email);
+						MoeChat.users[json.args.id].append();
+					}
 					break;
 				case "userleave":
-					if(json.args.id != MoeChat.user.ID)
-						MoeChat.removeUser(json.args.id);
+					if(json.args.id != MoeChat.user.id)
+						MoeChat.users[json.args.id].remove();
 					break;
 				case "namechange":
-					if(json.args.id != MoeChat.user.ID)
-						MoeChat.changeName(json.args.id, json.args.newname);
+					if(json.args.id != MoeChat.user.id)
+						MoeChat.users[json.args.id].setName(json.args.name);
 					break;
 				case "fnamechange":
 					MoeChat.user.name = json.args.newname;
 					$('#username').val(MoeChat.user.name);
 					break;
 				case "emailchange":
-					if(json.args.id != MoeChat.user.ID)
-						MoeChat.changeEmail(json.args.id, json.args.email);
+					if(json.args.id != MoeChat.user.id)
+						MoeChat.users[json.args.id].setEmail(json.args.email);
 					break;
 				case "uploadkey":
 					MoeChat.imgUpload.submit(json.args.key);
@@ -86,26 +88,18 @@ MoeChat.newWsConn = function() {
 
 		MoeChat.otr.sendMsg("v" + MoeChat.version);
 
-		MoeChat.user.email = localStorage.email ? localStorage.email : '';
-		var md5 = MoeChat.md5(MoeChat.user.email.toLowerCase().trim());
-		var imgurl = 'http://www.gravatar.com/avatar/'+md5+'?d=identicon';
-		MoeChat.user.img = imgurl;
-		$('#email').val(MoeChat.user.email);
-		if(MoeChat.user.email) MoeChat.otr.sendMsg("e" + MoeChat.user.email);
+		var name, email;
 
-		MoeChat.user.name = localStorage.username ? localStorage.username : "anon";
-		$('#username').val(MoeChat.user.name);
-		MoeChat.otr.sendMsg("u" + MoeChat.user.name);
+		name = localStorage.username ? localStorage.username : "anon";
+		$('#username').val(name);
 
-		MoeChat.sendMsg = function(message) {
-			if (!MoeChat.conn) return;
-			if (!message) return;
+		email = localStorage.email ? localStorage.email : '';
+		$('#email').val(email);
+		if(email) MoeChat.otr.sendMsg("e" + email);
 
-			if(message.indexOf("/") == 0)
-				MoeChat.otr.sendMsg('c' + message.substring(1));
-			else
-				MoeChat.otr.sendMsg('m' + message);
-		};
+		MoeChat.otr.sendMsg("u" + name);
+
+		MoeChat.user = new MoeChat.User(false, name, email);
 
 		MoeChat.dom.msgbox.keydown(function (e) {
 			if (!e.shiftKey && e.keyCode == 13) {
@@ -144,4 +138,13 @@ MoeChat.newWsConn = function() {
 
 		MoeChat.otr.receiveMsg(evt.data);
 	};
+};
+
+MoeChat.sendMsg = function(message) {
+	if (!MoeChat.conn || !message || MoeChat.user.id === false) return;
+
+	if(message.indexOf("/") == 0)
+		MoeChat.otr.sendMsg('c' + message.substring(1));
+	else
+		MoeChat.otr.sendMsg('m' + message);
 };
