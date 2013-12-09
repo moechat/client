@@ -5,6 +5,10 @@ body {
   height: 100%;
 }
 
+h1 {
+	color: #97c1c9;
+}
+
 #settings-btn {
 	margin-top: 1.2em;
 }

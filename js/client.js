@@ -1,6 +1,5 @@
-var MoeChat, $, Audio, localStorage, WebSocket, OTR, DSA;
+var MoeChat, $, localStorage, WebSocket, OTR, DSA;
 
-var version = '0.0.17';
 $(function() {
 	MoeChat.imgBtn = $('#img-btn');
 	MoeChat.roomID = 0;
@@ -10,11 +9,7 @@ $(function() {
 	MoeChat.userbox = $('#userbox');
 	MoeChat.imgbtn = $('#img-btn');
 
-	MoeChat.options = {};
-	MoeChat.options.msgRcvSnd = new Audio('/sounds/talitha.mp3');
-	MoeChat.options.msgSendSnd = false;
-	MoeChat.options.errorSnd = new Audio('/sounds/Error.mp3');
-
+	MoeChat.initOptions();
 	MoeChat.initImgUploads();
 
 	function playSnd(snd) {
@@ -44,7 +39,7 @@ $(function() {
 		var log = $('#room-'+room+' .log');
 		var msgwrap = $('#room-'+room+' .msgwrap');
 
-		if (uid != MoeChat.user.ID) playSnd(MoeChat.options.msgRcvSnd);
+		if (uid != MoeChat.user.ID) playSnd(MoeChat.sounds.msgRcvSnd);
 
 		if (uid == msgwrap.children(':last').data('uid')) {
 			var lmsg = msgwrap.find(':last-child .msg-body');
@@ -102,7 +97,7 @@ $(function() {
 		queryUsers();
 
 		MoeChat.otr = new OTR({priv: MoeChat.privkey});
-		MoeChat.otr.REQUIRE_ENCRYPTION = true;
+		if(MoeChat.options.enableOtr) MoeChat.otr.sendQueryMsg();
 
 		$('.disconnect.error').last().text('Reconnecting...');
 		$('#send-btn,#img-btn').addClass('disabled');
@@ -122,7 +117,7 @@ $(function() {
 				var d;
 				var json = JSON.parse(msg);
 				if (json.error) {
-					playSnd(MoeChat.options.errorSnd);
+					playSnd(MoeChat.sounds.errorSnd);
 					d = $('<div></div>').addClass('chat error panel');
 					d.append($('<b>').text(json.msg));
 					MoeChat.appendLog(d, [-1]);
@@ -165,14 +160,14 @@ $(function() {
 					appendMsg(json.user, json.msg, json.target);
 				}
 			} catch (e) {
-				playSnd(MoeChat.options.errorSnd);
+				playSnd(MoeChat.sounds.errorSnd);
 				MoeChat.appendLog($('<div class="chat error panel"><div/>').text('Error "'+e+'" while parsing message: '+msg));
 			}
 		});
 
 		MoeChat.conn = new WebSocket("ws://moechat.sauyon.com/chat");
 		MoeChat.conn.onopen = function() {
-			MoeChat.otr.sendMsg("v" + version);
+			MoeChat.otr.sendMsg("v" + MoeChat.version);
 
 			MoeChat.user.email = localStorage.email ? localStorage.email : '';
 			var md5 = $.md5(MoeChat.user.email.toLowerCase().trim());
@@ -230,14 +225,15 @@ $(function() {
 	}
 
 	if (window["WebSocket"]) {
-		if(localStorage.privKey) {
-			MoeChat.privkey = localStorage.privKey;
+		if(localStorage.privkey) {
+			MoeChat.privkey = DSA.parsePrivate(localStorage.privkey);
 		} else {
 			var d = $('<div class="chat notif panel></div>');
 			d.text('Generating new key....');
 			MoeChat.appendLog(d, [-1]);
 
-			new DSA();
+			MoeChat.privkey = new DSA();
+			localStorage.privkey = MoeChat.privkey.packPrivate();
 
 			d.text('Generating new key.... Done.');
 		}
