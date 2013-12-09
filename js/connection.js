@@ -110,12 +110,12 @@ MoeChat.newWsConn = function() {
 		MoeChat.dom.msgbox.keydown(function (e) {
 			if (!e.shiftKey && e.keyCode == 13) {
 				e.preventDefault();
-				MoeChat.sendMsg(MoeChat.msgbox.val());
+				MoeChat.sendMsg(MoeChat.dom.msgbox.val());
 				MoeChat.dom.msgbox.val('');
 			}
 		});
 		$('#send-btn').removeClass('disabled').text('Send').click(function() {
-			MoeChat.sendMsg(MoeChat.msgbox.val());
+			MoeChat.sendMsg(MoeChat.dom.msgbox.val());
 			MoeChat.dom.msgbox.val('');
 		});
 		$('#img-btn').removeClass('disabled');
