@@ -2,7 +2,6 @@
 
 cd /srv/chat/js
 java -jar $1 \
-	--js vendor/modernizr.js \
 	--js vendor/bigint.js \
 	--js vendor/crypto.js \
 	--js vendor/eventemitter.js \
