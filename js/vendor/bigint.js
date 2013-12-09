@@ -650,7 +650,7 @@
         }
       if (!sing) break; //quit when y all zero elements except possibly y[0]
 
-      for (i=x.length;!x[i] && i>=0;i--);  //find most significant element of x
+      for (i=x.length;!x[i] && i>=0;i--) {}  //find most significant element of x
       xp=x[i];
       yp=y[i];
       A=1; B=0; C=0; D=1;

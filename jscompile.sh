@@ -4,7 +4,6 @@ cd /srv/chat/js
 java -jar $1 \
 	--compilation_level ADVANCED_OPTIMIZATIONS \
 	--js vendor/modernizr.js \
-	--js vendor/jquery.js \
 	--js vendor/jquery.md5.js \
 	--js foundation/foundation.js \
 	--js foundation/foundation.reveal.js \
